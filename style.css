@@ -26,12 +26,11 @@ body::before {
 /* Contenedor principal encima del fondo */
 .container {
   position: relative;
-  z-index: 1;
-  background: rgba(255, 255, 255, 0.9);
+  background-image: url("./media/images/logos/question.svg");
   border-radius: 12px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
   width: 90%;
-  max-width: 520px;
+  max-width: 1000px;
   padding: 30px;
   text-align: center;
   animation: fadeIn 0.5s ease-in-out;
@@ -88,7 +87,7 @@ h1 {
 
 .nav {
   display: flex;
-  justify-content: space-between; 
+  justify-content: space-between;
   gap: 10px;
   margin-top: 12px;
 }

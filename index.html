@@ -9,8 +9,8 @@
   </head>
   <body>
     <main class="container">
-      <img src="./media/images/logos/" alt="Pitamex" class="logo" />
-      <h1>Registro Pitahaya Org</h1>
+      <img src="./media/images/logos/logo.webp" alt="Pitamex" class="logo" />
+      <h1>Registro Pitahaya Orgs</h1>
 
       <div id="form-root"></div>
 
@@ -24,32 +24,172 @@
       // Preguntas agrupadas por flujo
       const QUESTION_GROUPS = {
         // Si selecciona "Productor"
-        productor: [
-          { id: "q2", label: "Nombre del productor", options: [] },
-          {
-            id: "q3",
-            label: "¿Qué tipo de cultivo tienes?",
-            options: ["Pitahaya", "Otra"],
-          },
-          {
-            id: "q4",
-            label: "¿Tienes riego tecnificado?",
-            options: ["Sí", "No"],
-          },
-        ],
-        // Si selecciona "Comercializador"
-        comercializador: [
-          { id: "q2", label: "Nombre de la empresa", options: [] },
-          { id: "q3", label: "¿Qué productos comercializa?", options: [] },
-          { id: "q4", label: "¿Dónde se ubica tu empresa?", options: [] },
-        ],
-        // Si selecciona "Consumidor"
-        consumidor: [
+        plantOrEsqueaje: [
           { id: "q2", label: "Nombre completo", options: [] },
           {
             id: "q3",
-            label: "¿Con qué frecuencia consumes pitahaya?",
-            options: ["Frecuente", "Ocasional", "Nunca"],
+            label: "Teléfono / WhatsApp",
+          },
+          {
+            id: "q4",
+            label: "Municipio / Estado",
+          },
+          {
+            id: "q5",
+            label: "Tipo de terreno",
+            options: ["Propio", "Rentado", "Ejido"],
+          },
+          {
+            id: "q6",
+            label: "Superficie disponible (ha)",
+            options: ["0.1", "1", "2-5", "5+"],
+          },
+          {
+            id: "q4",
+            label: "Disponibilidad de agua",
+            options: ["Pozo", "Canal", "Pipa", "Solo lluvia"],
+          },
+          {
+            id: "q7",
+            label: "¿Zona con heladas?",
+            options: ["Sí", "No", "No sé"],
+          },
+          {
+            id: "q8",
+            label: "¿Tiene energía eléctrica?",
+            options: ["Sí", "No"],
+          },
+          {
+            id: "q9",
+            label: "¿Cuenta con mano de obra?",
+            options: ["Sí", "A veces", "No"],
+          },
+          {
+            id: "q10",
+            label: "Nivel de decisión",
+            options: ["100% seguro", "Evaluando", "Solo viendo"],
+          },
+          {
+            id: "q11",
+            label: "Tiempo estimado para iniciar",
+            options: ["Inmediato", "Próximo ciclo", "Sin fecha"],
+          },
+        ],
+        // Si selecciona "Comercializador"
+        frut: [
+          { id: "q2", label: "Nombre completo", options: [] },
+          {
+            id: "q3",
+            label: "Teléfono / WhatsApp",
+          },
+          {
+            id: "q4",
+            label: "Ciudad / Estado",
+          },
+          {
+            id: "q5",
+            label: "Tipo de fruta",
+            options: ["Blanca", "Color", "Ambas"],
+          },
+          {
+            id: "q6",
+            label: "Volumen",
+            options: ["5-50", "50-300", "300-1000", "1000"],
+          },
+          {
+            id: "q7",
+            label: "Frecuencia",
+            options: ["Única", "Semanal", "Quincenal", "Mensual", "Temporada"],
+          },
+          {
+            id: "q8",
+            label: "Presentaciòn",
+            options: ["Granel", "Caja 5kg", "Caja 6.8kg", "Otro"],
+          },
+          {
+            id: "q9",
+            label: "Calidad",
+            options: ["Seleccionada", "Comercial", "Segunda"],
+          },
+          {
+            id: "q10",
+            label: "Lugar de entrega",
+            options: ["Negocio", "CEDIS", "Central", "Punto de carga"],
+          },
+          {
+            id: "q11",
+            label: "Flete",
+            options: ["Cliente", "Proovedor", "Depende"],
+          },
+          {
+            id: "q12",
+            label: "Transporte",
+            options: ["Sì", "No"],
+          },
+          {
+            id: "q13",
+            label: "Pago",
+            options: ["Contado", "Contra entrega", "Crèdito"],
+          },
+          {
+            id: "q14",
+            label: "Crèdito",
+            options: ["7", "15", "30", ">30"],
+          },
+          {
+            id: "q15",
+            label: "Inicio",
+            options: [
+              "Inmediato",
+              "Proxima semana",
+              "Pròximo mes",
+              "Solo viendo",
+            ],
+          },
+        ],
+        // Si selecciona "Consumidor"
+        asesoryTec: [
+          { id: "q2", label: "Nombre completo", options: [] },
+          {
+            id: "q3",
+            label: "Teléfono / WhatsApp",
+          },
+          {
+            id: "q4",
+            label: "Municipio / Estado",
+          },
+        ],
+        process: [
+          { id: "q2", label: "Nombre completo", options: [] },
+          {
+            id: "q3",
+            label: "Teléfono / WhatsApp",
+          },
+          {
+            id: "q4",
+            label: "Municipio / Estado",
+          },
+        ],
+        providers: [
+          { id: "q2", label: "Nombre completo", options: [] },
+          {
+            id: "q3",
+            label: "Teléfono / WhatsApp",
+          },
+          {
+            id: "q4",
+            label: "Municipio / Estado",
+          },
+        ],
+        info: [
+          { id: "q2", label: "Nombre completo", options: [] },
+          {
+            id: "q3",
+            label: "Teléfono / WhatsApp",
+          },
+          {
+            id: "q4",
+            label: "Municipio / Estado",
           },
         ],
       };
@@ -57,8 +197,16 @@
       // Primera pregunta base
       const FIRST_QUESTION = {
         id: "q1",
-        label: "¿Cuál es tu perfil?",
-        options: ["productor", "comercializador", "consumidor"],
+        label: "Selección de Interés",
+        // options: ["productor", "comercializador", "consumidor"],
+        options: [
+          { uuid: "plantOrEsqueaje", label: "Planta / Esqueje" },
+          { uuid: "frut", label: "Fruta (Nacional / Exportación)" },
+          { uuid: "asesoryTec", label: "Asesoría Técnica" },
+          { uuid: "process", label: "Procesado (Congelado / Deshidratado)" },
+          { uuid: "providers", label: "Proveedores / Alianzas / Estancias" },
+          { uuid: "info", label: "Solo Información" },
+        ],
       };
 
       // Arreglo que irá cambiando dinámicamente
