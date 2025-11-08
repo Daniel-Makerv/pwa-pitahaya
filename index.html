@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registro Pitahaya Org</title>
+    <link rel="manifest" href="manifest.json" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="container">
+      <img src="./media/images/logos/" alt="Pitamex" class="logo" />
+      <h1>Registro Pitahaya Org</h1>
+
+      <div id="form-root"></div>
+
+      <div class="export-section">
+        <button id="export">📤 Exportar a Excel</button>
+      </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script>
+      // Preguntas agrupadas por flujo
+      const QUESTION_GROUPS = {
+        // Si selecciona "Productor"
+        productor: [
+          { id: "q2", label: "Nombre del productor", options: [] },
+          {
+            id: "q3",
+            label: "¿Qué tipo de cultivo tienes?",
+            options: ["Pitahaya", "Otra"],
+          },
+          {
+            id: "q4",
+            label: "¿Tienes riego tecnificado?",
+            options: ["Sí", "No"],
+          },
+        ],
+        // Si selecciona "Comercializador"
+        comercializador: [
+          { id: "q2", label: "Nombre de la empresa", options: [] },
+          { id: "q3", label: "¿Qué productos comercializa?", options: [] },
+          { id: "q4", label: "¿Dónde se ubica tu empresa?", options: [] },
+        ],
+        // Si selecciona "Consumidor"
+        consumidor: [
+          { id: "q2", label: "Nombre completo", options: [] },
+          {
+            id: "q3",
+            label: "¿Con qué frecuencia consumes pitahaya?",
+            options: ["Frecuente", "Ocasional", "Nunca"],
+          },
+        ],
+      };
+
+      // Primera pregunta base
+      const FIRST_QUESTION = {
+        id: "q1",
+        label: "¿Cuál es tu perfil?",
+        options: ["productor", "comercializador", "consumidor"],
+      };
+
+      // Arreglo que irá cambiando dinámicamente
+      let QUESTIONS = [FIRST_QUESTION];
+    </script>
+
+    <script src="db.js"></script>
+    <script src="export.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

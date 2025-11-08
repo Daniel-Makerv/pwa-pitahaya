@@ -1,0 +1,125 @@
+/* Fondo con imagen */
+body {
+  font-family: "Poppins", sans-serif;
+  background: url("1.- ¡Hola! Platícanos ¿Qué estás buscando (2).png") no-repeat
+    center center fixed;
+  background-size: cover;
+  color: #333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  position: relative;
+}
+
+/* Capa semitransparente para mejorar contraste del texto */
+body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(3px);
+  z-index: 0;
+}
+
+/* Contenedor principal encima del fondo */
+.container {
+  position: relative;
+  z-index: 1;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 520px;
+  padding: 30px;
+  text-align: center;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+h1 {
+  font-size: 22px;
+  margin-bottom: 18px;
+  color: #ff6600;
+}
+
+.logo {
+  width: 120px;
+  margin-bottom: 10px;
+}
+
+.step {
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+  align-items: stretch;
+}
+
+.step.active {
+  display: flex;
+}
+
+.question {
+  font-weight: 600;
+  text-align: left;
+  margin-bottom: 6px;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.btn {
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+  background: #ff6600;
+  color: white;
+}
+
+.btn.secondary {
+  background: #eee;
+  color: #333;
+}
+
+.nav {
+  display: flex;
+  justify-content: space-between; 
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.progress {
+  height: 6px;
+  background: #f0f0f0;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-top: 14px;
+}
+
+.progress > div {
+  height: 100%;
+  background: #ff6600;
+  width: 0%;
+  transition: width 300ms ease;
+}
+
+input[type="text"],
+input[type="email"],
+textarea {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 15px;
+}
+
+/* Adaptación a móviles */
+@media (max-width: 420px) {
+  .container {
+    padding: 20px;
+  }
+}
