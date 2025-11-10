@@ -223,11 +223,6 @@ function showFinalMessage() {
   const wrapper = document.createElement("div");
   wrapper.className = "final-message";
 
-  const logo = document.createElement("img");
-  logo.src = "./media/images/logos/logo.webp"; // o usa la misma que en tu HTML
-  logo.alt = "Pitamex";
-  logo.className = "final-logo";
-
   const message1 = document.createElement("p");
   message1.textContent =
     "Todo cultivo florece mejor cuando se comparte el conocimiento.";
@@ -241,7 +236,6 @@ function showFinalMessage() {
   link.target = "_blank";
   link.className = "final-link";
 
-  wrapper.appendChild(logo);
   wrapper.appendChild(message1);
   wrapper.appendChild(message2);
   wrapper.appendChild(link);
