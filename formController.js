@@ -15,13 +15,18 @@ async function sendPendingData() {
   for (const uuidBase in unsyncedData) {
     const records = unsyncedData[uuidBase];
 
+    let token = "goro4vmm.gd3";
+
     for (const record of records) {
       try {
-        const response = await fetch("https://tuapi.com/data", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(record),
-        });
+        const response = await fetch(
+          "http://admin-pitahaya.brounieapps.com/api/create/form",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(record, uuidBase, token),
+          }
+        );
 
         if (response.ok) {
           // 🔹 Si se envió correctamente, marcamos el registro como enviado
