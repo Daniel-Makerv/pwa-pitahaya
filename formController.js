@@ -47,6 +47,7 @@ async function sendPendingData() {
           };
         } else {
           console.error("❌ Error del servidor al sincronizar:", record);
+          console.error(response);
         }
       } catch (error) {
         console.warn("⚠️ Sin conexión. Se intentará más tarde.");
