@@ -369,3 +369,9 @@ button:hover {
 .final-link:hover {
   text-decoration: underline;
 }
+
+.btn.secondary::before {
+  content: "←";
+  margin-right: 6px;
+  font-size: 14px;
+}
