@@ -11,7 +11,7 @@ async function sendPendingData() {
   const tx = db.transaction(STORE_NAME, "readwrite");
   const store = tx.objectStore(STORE_NAME);
 
-  // Recorremos cada grupo (uuidBase)
+  // Recorremos cada grupo (uuidBase)s
   for (const uuidBase in unsyncedData) {
     const records = unsyncedData[uuidBase];
 
@@ -20,7 +20,7 @@ async function sendPendingData() {
     for (const record of records) {
       try {
         const response = await fetch(
-          "http://admin-pitahaya.brounieapps.com/api/create/form",
+          "https://admin-pitahaya.brounieapps.com/login/api/create/form",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
