@@ -7,6 +7,7 @@ const ASSETS = [
   "app.js",
   "db.js",
   "export.js",
+  "formController.js",
   "manifest.json",
   "/media/images/logos/question.png",
   "./libs/js/xlsx.full.min.js",

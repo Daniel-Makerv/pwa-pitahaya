@@ -22,7 +22,7 @@ async function sendPendingData() {
     for (const record of records) {
       try {
         const response = await fetch(
-          "https://admin-pitahaya.brounieapps.com/login/api/create/form",
+          "https://admin-pitahaya.brounieapps.com/api/create/form",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
