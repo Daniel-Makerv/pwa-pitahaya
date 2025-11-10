@@ -1,4 +1,3 @@
-
 const root = document.getElementById("form-root");
 let current = 0;
 let answers = {};
@@ -125,6 +124,9 @@ function render() {
         );
         manualSyncSetup();
       }
+
+      showFinalMessage(respuestaBase);
+
       resetForm();
     });
 
@@ -217,4 +219,42 @@ function manualSyncSetup() {
       await sendPendingData();
     }
   }, 50000);
+}
+
+function showFinalMessage() {
+  root.innerHTML = "";
+
+  const wrapper = document.createElement("div");
+  wrapper.className = "final-message";
+
+  const logo = document.createElement("img");
+  logo.src = "./media/images/logos/logo.webp"; // o usa la misma que en tu HTML
+  logo.alt = "Pitamex";
+  logo.className = "final-logo";
+
+  const message1 = document.createElement("p");
+  message1.textContent =
+    "Todo cultivo florece mejor cuando se comparte el conocimiento.";
+
+  const message2 = document.createElement("p");
+  message2.textContent = "Gracias por tu confianza.";
+
+  const link = document.createElement("a");
+  link.href = "https://pitahayaorg.com";
+  link.textContent = "pitahayaorg.com";
+  link.target = "_blank";
+  link.className = "final-link";
+
+  wrapper.appendChild(logo);
+  wrapper.appendChild(message1);
+  wrapper.appendChild(message2);
+  wrapper.appendChild(link);
+
+  root.appendChild(wrapper);
+
+  // Mostrar por 10 segundos y luego reiniciar formulario
+  setTimeout(() => {
+    resetForm();
+    render();
+  }, 10000);
 }
