@@ -1,124 +1,337 @@
-/* Fondo con imagen */
-body {
-  font-family: "Poppins", sans-serif;
-  background: url("1.- ¡Hola! Platícanos ¿Qué estás buscando (2).png") no-repeat
-    center center fixed;
-  background-size: cover;
-  color: #333;
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap");
+
+/* Contenedor principal */
+.page {
+  font-family: "Open Sans", sans-serif;
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  margin: 0;
-  position: relative;
-}
-
-/* Capa semitransparente para mejorar contraste del texto */
-body::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(3px);
-  z-index: 0;
-}
-
-/* Contenedor principal encima del fondo */
-.container {
-  position: relative;
-  background-image: url("./media/images/logos/question.svg");
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  width: 90%;
-  max-width: 1000px;
-  padding: 30px;
-  text-align: center;
-  animation: fadeIn 0.5s ease-in-out;
-}
-
-h1 {
-  font-size: 22px;
-  margin-bottom: 18px;
-  color: #000000;
-}
-
-.logo {
-  width: 120px;
-  margin-bottom: 10px;
-}
-
-.step {
-  display: none;
-  flex-direction: column;
-  gap: 12px;
-  align-items: stretch;
-}
-
-.step.active {
-  display: flex;
-}
-
-.question {
-  font-weight: 600;
-  text-align: left;
-  margin-bottom: 6px;
-}
-
-.options {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.btn {
-  padding: 12px;
-  border: none;
-  border-radius: 8px;
-  font-size: 15px;
-  cursor: pointer;
-  background: #ffffff;
-  color: dark;
-}
-
-.btn.secondary {
-  background: #eee;
-  color: #333;
-}
-
-.nav {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  margin-top: 12px;
-}
-
-.progress {
-  height: 6px;
-  background: #f0f0f0;
-  border-radius: 6px;
   overflow: hidden;
-  margin-top: 14px;
+  background-color: #fdf9f6;
 }
 
-.progress > div {
+/* Marcos laterales */
+.frame-left,
+.frame-right {
+  position: absolute;
+  top: 0;
+  width: 500px; /* Ajusta el ancho según tus imágenes */
   height: 100%;
-  background: #ff6600;
-  width: 0%;
-  transition: width 300ms ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
 }
 
+.frame-left {
+  left: 0;
+}
+
+.frame-right {
+  right: 0;
+}
+
+.frame-left img,
+.frame-right img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Asegura que la imagen cubra todo el lateral */
+}
+
+/* Contenido principal */
+.content {
+  position: relative;
+  z-index: 2;
+  background-color: #fdf9f6;
+  border-radius: 16px;
+  padding: 2rem;
+}
+/* Tarjeta */
+
+/* Asegura que haya espacio entre el form y el logo */
+#form-root {
+  margin-bottom: 3rem; /* crea espacio fijo entre el form y el logo */
+}
+
+/* === Posición del logo fija al lado derecho === */
+.card-logo {
+  position: fixed; /* Siempre pegado al borde de la ventana */
+  top: 50%; /* Centrado verticalmente */
+  right: 16rem; /* Espacio desde el borde derecho */
+  transform: translateY(-50%); /* Ajuste perfecto de centrado */
+  width: 200px;
+  height: auto;
+  z-index: 10;
+  transition: all 0.3s ease;
+}
+
+/* Asegura que el contenido no choque con el logo */
+.content {
+  position: relative;
+  z-index: 2;
+  background-color: #fdf9f6;
+  border-radius: 16px;
+  padding: 2rem 18rem 2rem 2rem; /* margen derecho extra para evitar solapamiento */
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  #form-root {
+    margin-bottom: 2rem;
+  }
+
+  .card-logo {
+    width: 30%;
+    max-width: 120px;
+    right: 0.5rem;
+    bottom: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  #form-root {
+    margin-bottom: 1.5rem;
+  }
+
+  .card-logo {
+    width: 40%;
+    max-width: 100px;
+  }
+}
+
+/* En pantallas grandes */
+@media (min-width: 1024px) {
+  #form-root {
+    margin-bottom: 4rem;
+  }
+
+  .card-logo {
+    width: 30%;
+    max-width: 220px;
+  }
+}
+
+@media (min-width: 1440px) {
+  #form-root {
+    margin-bottom: 5rem;
+  }
+
+  .card-logo {
+    width: 35%;
+    max-width: 260px;
+  }
+}
+
+@media (min-width: 1920px) {
+  #form-root {
+    margin-bottom: 6rem;
+  }
+
+  .card-logo {
+    width: 40%;
+    max-width: 300px;
+  }
+}
+
+/* Responsive: oculta o reduce los bordes en pantallas pequeñas */
+@media (max-width: 768px) {
+  .frame-left,
+  .frame-right {
+    width: 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  .frame-left,
+  .frame-right {
+    display: none;
+  }
+}
+/* === Inputs tipo línea (como en la imagen) === */
 input[type="text"],
 input[type="email"],
+input[type="password"],
 textarea {
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 15px;
+  width: 100%;
+  border: none;
+  border-bottom: 2px solid #ccc;
+  background-color: transparent;
+  padding: 0.5rem 0;
+  font-size: 1.1rem;
+  color: #333;
+  outline: none;
+  transition: border-color 0.3s ease;
+  font-family: "Open Sans", sans-serif;
 }
 
-/* Adaptación a móviles */
-@media (max-width: 420px) {
-  .container {
-    padding: 20px;
+input::placeholder,
+textarea::placeholder {
+  color: #aaa;
+  font-size: 1rem;
+}
+
+/* Al enfocar el input, el subrayado se vuelve de color primario */
+input:focus,
+textarea:focus {
+  border-color: #e84a6a; /* tono rosado como el del logo */
+}
+
+/* === Etiquetas o textos de pregunta === */
+label,
+.question {
+  display: block;
+  font-size: 1.6rem; /* 🔹 Más grande */
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+/* === Botón “Siguiente pregunta” === */
+button {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  border: none;
+  background: none;
+  color: #e84a6a;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 1.5rem;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+button::before {
+  content: "➤";
+  display: inline-block;
+  background-color: #e84a6a;
+  color: #fff;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  line-height: 28px;
+  text-align: center;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button:hover::before {
+  background-color: #c63d59;
+  transform: translateX(3px);
+}
+
+button:hover {
+  color: #c63d59;
+}
+
+/* === Contenedor general del formulario === */
+.form-dynamic {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+/* === RESPONSIVE === */
+
+/* Tablets (pantallas medianas) */
+@media (max-width: 1024px) {
+  .question {
+    font-size: 1.4rem;
+  }
+  input,
+  textarea {
+    font-size: 1.2rem;
+  }
+  button {
+    font-size: 1.1rem;
+  }
+}
+
+/* Teléfonos (pantallas pequeñas) */
+@media (max-width: 768px) {
+  .form-dynamic {
+    padding: 1.5rem;
+  }
+
+  .question-text {
+    font-size: 1.2rem;
+    text-align: center;
+  }
+
+  input,
+  textarea {
+    font-size: 1.1rem;
+    text-align: center;
+  }
+
+  button {
+    justify-content: center;
+    font-size: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  button::before {
+    width: 28px;
+    height: 28px;
+    line-height: 28px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Teléfonos muy pequeños (320px - 480px) */
+@media (max-width: 480px) {
+  .question {
+    font-size: 1.05rem;
+  }
+
+  input,
+  textarea {
+    font-size: 1rem;
+  }
+
+  button {
+    font-size: 0.95rem;
+  }
+
+  button::before {
+    width: 26px;
+    height: 26px;
+    line-height: 26px;
+    font-size: 0.8rem;
+  }
+}
+
+/* Tablets (pantallas medianas) */
+@media (max-width: 1024px) {
+  .card-logo {
+    width: 160px;
+    right: 7rem;
+  }
+  .content {
+    padding: 2rem 12rem 2rem 2rem;
+  }
+}
+
+/* Teléfonos grandes (pantallas pequeñas) */
+@media (max-width: 768px) {
+  .card-logo {
+    position: static; /* El logo ya no flota, baja debajo del contenido */
+    display: block;
+    margin: 2rem auto 0; /* Centrado horizontal */
+    width: 140px;
+    transform: none;
+  }
+
+  .content {
+    padding: 1.5rem;
+  }
+}
+
+/* Teléfonos muy pequeños */
+@media (max-width: 480px) {
+  .card-logo {
+    width: 120px;
+    margin-top: 1.5rem;
   }
 }

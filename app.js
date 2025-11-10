@@ -55,6 +55,13 @@ function render() {
       handleAnswer(q, val);
     });
     content.appendChild(nextBtn);
+
+    // 👇 Agrega este bloque para enfocar automáticamente el input
+    if (q.type === "text") {
+      setTimeout(() => {
+        input.focus();
+      }, 300);
+    }
   }
 
   step.appendChild(content);
@@ -62,26 +69,29 @@ function render() {
   // Botones de navegación
   const nav = document.createElement("div");
   nav.className = "nav";
-  const back = document.createElement("button");
-  back.className = "btn secondary";
-  back.type = "button";
-  back.textContent = "Atrás";
-  back.disabled = current === 0;
-  back.addEventListener("click", () => {
-    if (current > 0) current--;
-    render();
-  });
-  nav.appendChild(back);
+  if (selectedGroup && current > 0) {
+    const back = document.createElement("button");
+    back.className = "btn secondary";
+    back.type = "button";
+    back.textContent = "Atrás";
+    back.addEventListener("click", () => {
+      if (current > 0) current--;
+      render();
+    });
+    nav.appendChild(back);
+  }
 
   // Botón finalizar si es el último paso
-  if (current === QUESTIONS.length - 1) {
+  if (selectedGroup && current === QUESTIONS.length - 1) {
+    console.log(current);
+    console.log(QUESTIONS);
     const finish = document.createElement("button");
     finish.className = "btn";
     finish.type = "button";
     finish.textContent = "Finalizar y guardar";
 
     finish.addEventListener("click", async () => {
-      const record = { fecha: new Date().toISOString() };
+      const record = { fecha: new Date().toISOString(), send_api: false };
 
       // Guardar todas las respuestas
       QUESTIONS.forEach((q) => {
@@ -92,19 +102,24 @@ function render() {
       const respuestaBase = answers[FIRST_QUESTION.id]; // por ejemplo "Planta / Esqueje"
       const uuidBase = selectedGroup; // su uuid asociado (plantOrEsqueaje, frut, etc.)
 
-      // Cargar registros previos
-      const recordsData = JSON.parse(localStorage.getItem("recordsData")) || {
-        plantOrEsqueaje: [],
-        frut: [],
-        asesoryTec: [],
-        process: [],
-        providers: [],
-        info: [],
-      };
-
       // Insertar el registro en el grupo correspondiente
       await saveRecord(uuidBase, record);
       alert(`✅ Registro guardado en el grupo: ${respuestaBase}`);
+
+      // 👇👇 Agrega esto para registrar la sincronización
+      if ("serviceWorker" in navigator && "SyncManager" in window) {
+        const registration = await navigator.serviceWorker.ready;
+        try {
+          await registration.sync.register("sync-data");
+          console.log("📡 Sincronización registrada con éxito");
+        } catch (err) {
+          console.error("❌ No se pudo registrar la sincronización", err);
+        }
+      } else {
+        console.warn(
+          "SyncManager no soportado, se usará sincronización manual"
+        );
+      }
       resetForm();
     });
 

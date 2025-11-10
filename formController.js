@@ -1,25 +1,50 @@
 async function sendPendingData() {
-    const db = await openDB('pwa-database', 1);
-    const allData = await db.getAll('pending');
-  
-    for (const record of allData) {
+  const unsyncedData = await getUnsyncedRecords();
+
+  // Si no hay datos pendientes, salimos
+  if (Object.keys(unsyncedData).length === 0) {
+    console.log("✅ No hay registros pendientes por enviar.");
+    return;
+  }
+
+  const db = await openDB();
+  const tx = db.transaction(STORE_NAME, "readwrite");
+  const store = tx.objectStore(STORE_NAME);
+
+  // Recorremos cada grupo (uuidBase)
+  for (const uuidBase in unsyncedData) {
+    const records = unsyncedData[uuidBase];
+
+    for (const record of records) {
       try {
-        const response = await fetch('https://tuapi.com/data', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+        const response = await fetch("https://tuapi.com/data", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(record),
         });
-  
+
         if (response.ok) {
-          await db.delete('pending', record.id);
-          console.log('Dato sincronizado y eliminado:', record);
+          // 🔹 Si se envió correctamente, marcamos el registro como enviado
+          const storedGroup = await store.get(uuidBase);
+          storedGroup.onsuccess = () => {
+            const groupData = storedGroup.result;
+            const index = groupData.records.findIndex(
+              (r) => r.id === record.id
+            );
+
+            if (index !== -1) {
+              groupData.records[index].send_api = true;
+              store.put(groupData);
+              console.log("✅ Registro sincronizado:", record);
+            }
+          };
         } else {
-          console.error('Error al sincronizar:', record);
+          console.error("❌ Error del servidor al sincronizar:", record);
         }
       } catch (error) {
-        console.warn('Error de conexión, se intentará más tarde');
-        break;
+        console.warn("⚠️ Sin conexión. Se intentará más tarde.");
+        return; // Detenemos para no seguir intentando
       }
     }
   }
-  
+}

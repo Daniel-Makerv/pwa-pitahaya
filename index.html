@@ -8,16 +8,27 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <main class="container">
-      <img src="./media/images/logos/logo.webp" alt="Pitamex" class="logo" />
-      <h1>Registro</h1>
-
-      <div id="form-root"></div>
-
-      <div class="export-section">
-        <button id="export">📤 Exportar a Excel</button>
+    <div class="page">
+      <!-- Marcos laterales con imágenes -->
+      <div class="frame-left">
+        <img src="./media/images/logos/borde1.png" alt="Borde izquierdo" />
       </div>
-    </main>
+      <div class="frame-right">
+        <img src="./media/images/logos/borde2.png" alt="Borde derecho" />
+      </div>
+
+      <!-- Contenido central -->
+      <main class="content">
+        <section class="card">
+          <div id="form-root"></div>
+          <img
+            src="./media/images/logos/logo.webp"
+            alt="logo"
+            class="card-logo"
+          />
+        </section>
+      </main>
+    </div>
     <script src="./libs/js/xlsx.full.min.js"></script>
 
     <script>
@@ -25,120 +36,128 @@
       const QUESTION_GROUPS = {
         // Si selecciona "Productor"
         plantOrEsqueaje: [
-          { id: "q2", label: "Nombre completo", options: [] },
+          {
+            id: "q2",
+            label: "1.- ¡Hola! Platícanos un poco de ti ¿Cuál es tu nombre?",
+            options: [],
+          },
           {
             id: "q3",
-            label: "Teléfono / WhatsApp",
+            label: "2.-Teléfono / WhatsApp",
           },
           {
             id: "q4",
-            label: "Municipio / Estado",
+            label: "3.-Municipio / Estado",
           },
           {
             id: "q5",
-            label: "Tipo de terreno",
+            label: "4.-Tipo de terreno",
             options: ["Propio", "Rentado", "Ejido"],
           },
           {
             id: "q6",
-            label: "Superficie disponible (ha)",
+            label: "5.-Superficie disponible (ha)",
             options: ["0.1", "1", "2-5", "5+"],
           },
           {
             id: "q4",
-            label: "Disponibilidad de agua",
+            label: "6.-Disponibilidad de agua",
             options: ["Pozo", "Canal", "Pipa", "Solo lluvia"],
           },
           {
             id: "q7",
-            label: "¿Zona con heladas?",
+            label: "7.- ¿Zona con heladas?",
             options: ["Sí", "No", "No sé"],
           },
           {
             id: "q8",
-            label: "¿Tiene energía eléctrica?",
+            label: "8.- ¿Tiene energía eléctrica?",
             options: ["Sí", "No"],
           },
           {
             id: "q9",
-            label: "¿Cuenta con mano de obra?",
+            label: "9.- ¿Cuenta con mano de obra?",
             options: ["Sí", "A veces", "No"],
           },
           {
             id: "q10",
-            label: "Nivel de decisión",
+            label: "10.- Nivel de decisión",
             options: ["100% seguro", "Evaluando", "Solo viendo"],
           },
           {
             id: "q11",
-            label: "Tiempo estimado para iniciar",
+            label: "11.- Tiempo estimado para iniciar",
             options: ["Inmediato", "Próximo ciclo", "Sin fecha"],
           },
         ],
         // Si selecciona "Comercializador"
         frut: [
-          { id: "q2", label: "Nombre completo", options: [] },
+          {
+            id: "q2",
+            label: "1.- ¡Hola! Platícanos un poco de ti ¿Cuál es tu nombre?",
+            options: [],
+          },
           {
             id: "q3",
-            label: "Teléfono / WhatsApp",
+            label: "2.-Teléfono / WhatsApp",
           },
           {
             id: "q4",
-            label: "Ciudad / Estado",
+            label: "3.- Ciudad / Estado",
           },
           {
             id: "q5",
-            label: "Tipo de fruta",
+            label: "4.- Tipo de fruta",
             options: ["Blanca", "Color", "Ambas"],
           },
           {
             id: "q6",
-            label: "Volumen",
+            label: "5.- Volumen",
             options: ["5-50", "50-300", "300-1000", "1000"],
           },
           {
             id: "q7",
-            label: "Frecuencia",
+            label: "6.- Frecuencia",
             options: ["Única", "Semanal", "Quincenal", "Mensual", "Temporada"],
           },
           {
             id: "q8",
-            label: "Presentaciòn",
+            label: "7.- Presentaciòn",
             options: ["Granel", "Caja 5kg", "Caja 6.8kg", "Otro"],
           },
           {
             id: "q9",
-            label: "Calidad",
+            label: "8.- Calidad",
             options: ["Seleccionada", "Comercial", "Segunda"],
           },
           {
             id: "q10",
-            label: "Lugar de entrega",
+            label: "9.-Lugar de entrega",
             options: ["Negocio", "CEDIS", "Central", "Punto de carga"],
           },
           {
             id: "q11",
-            label: "Flete",
+            label: "10.- Flete",
             options: ["Cliente", "Proovedor", "Depende"],
           },
           {
             id: "q12",
-            label: "Transporte",
+            label: "11.- Transporte",
             options: ["Sì", "No"],
           },
           {
             id: "q13",
-            label: "Pago",
+            label: "12.- Pago",
             options: ["Contado", "Contra entrega", "Crèdito"],
           },
           {
             id: "q14",
-            label: "Crèdito",
+            label: "13.- Crèdito",
             options: ["7", "15", "30", ">30"],
           },
           {
             id: "q15",
-            label: "Inicio",
+            label: "14.- Inicio",
             options: [
               "Inmediato",
               "Proxima semana",
@@ -149,59 +168,63 @@
         ],
         // Si selecciona "Consumidor"
         asesoryTec: [
-          { id: "q2", label: "Nombre completo", options: [] },
+          {
+            id: "q2",
+            label: "1.- ¡Hola! Platícanos un poco de ti ¿Cuál es tu nombre?",
+            options: [],
+          },
           {
             id: "q3",
-            label: "Teléfono / WhatsApp",
+            label: "2.- Teléfono / WhatsApp",
           },
           {
             id: "q4",
-            label: "Municipio / Estado",
+            label: "3.- Municipio / Estado",
           },
           {
             id: "q5",
-            label: "Años cultivo",
+            label: "4.- Años cultivo",
             options: ["<1", "1-3", "3-7", "7"],
           },
           {
             id: "q6",
-            label: "Superficie(ha)",
+            label: "5.- Superficie(ha)",
           },
           {
             id: "q7",
-            label: "Plantas",
+            label: "6.- Plantas",
           },
           {
             id: "q8",
-            label: "Variedades",
+            label: "7.- Variedades",
           },
           {
             id: "q9",
-            label: "Propósito",
+            label: "8.- Propósito",
             options: ["Local", "Central", "Exportaciòn", "Familiar"],
           },
           {
             id: "q10",
-            label: "Tutor",
+            label: "9.- Tutor",
             options: ["Vivo", "Madera", "Concreto", "Acero", "Mixto"],
           },
           {
             id: "q11",
-            label: "Riego",
+            label: "10.- Riego",
             options: ["Goteo", "Microaspersión", "Pipa", "Temporal"],
           },
           {
             id: "q12",
-            label: "Fertilización",
+            label: "11.- Fertilización",
             options: ["Orgánica", "Orgánica", "Mixta", "No aplica"],
           },
           {
             id: "q13",
-            label: "Problemas",
+            label: "12.- Problemas",
           },
           {
             id: "q14",
-            label: "Estado cultivo",
+            label: "13.- Estado cultivo",
             options: [
               "Plantas fuertes",
               "Plantas lentas",
@@ -211,12 +234,12 @@
           },
           {
             id: "q15",
-            label: "Producción",
+            label: "14.- Producción",
             options: ["Inicio", "Media", "Estable ", "Baja", "Detenida"],
           },
           {
             id: "q16",
-            label: "Objetivo",
+            label: "15.- Objetivo",
             options: [
               "Producción",
               "Calidad",
@@ -227,7 +250,7 @@
           },
           {
             id: "q17",
-            label: "Tipo asesoría",
+            label: "16.- Tipo asesoría",
             options: [
               "Diagnóstico",
               "Mensual",
@@ -237,7 +260,7 @@
           },
           {
             id: "q18",
-            label: "Involucramiento",
+            label: "17.- Involucramiento",
             options: [
               "Yo mismo",
               "Superviso personal",
@@ -247,7 +270,7 @@
           },
           {
             id: "q19",
-            label: "Compromiso",
+            label: "18.- Compromiso",
             options: [
               "100%",
               "Intermedio",
@@ -257,28 +280,32 @@
           },
           {
             id: "q20",
-            label: "Visita",
+            label: "19.- Visita",
             options: ["Sí", "No"],
           },
         ],
         process: [
-          { id: "q2", label: "Nombre completo", options: [] },
+          {
+            id: "q2",
+            label: "1.- ¡Hola! Platícanos un poco de ti ¿Cuál es tu nombre?",
+            options: [],
+          },
           {
             id: "q3",
-            label: "Teléfono / WhatsApp",
+            label: "2.- Teléfono / WhatsApp",
           },
           {
             id: "q4",
-            label: "Ciudad / Estado",
+            label: "3.- Ciudad / Estado",
           },
           {
             id: "q5",
-            label: "Rol",
+            label: "4.- Rol",
             options: ["Propietario", "Compras", "Producción", "Otro"],
           },
           {
             id: "q6",
-            label: "Uso",
+            label: "5.- Uso",
             options: [
               "Congelado",
               "Deshidratado",
@@ -290,12 +317,12 @@
           },
           {
             id: "q7",
-            label: "Planta",
+            label: "8.- Planta",
             options: ["Sí propia", "Sí maquila", "No"],
           },
           {
             id: "q8",
-            label: "Proceso",
+            label: "9.- Proceso",
             options: [
               "IQF",
               "Pulpa congelada",
@@ -306,17 +333,17 @@
           },
           {
             id: "q9",
-            label: "Volumen",
+            label: "10.- Volumen",
             options: ["50-200", "200-600", "600-1500", "1500"],
           },
           {
             id: "q10",
-            label: "Frecuencia",
+            label: "11.- Frecuencia",
             options: ["Única", "Semanal", "Quincenal", "Mensual", "Temporada"],
           },
           {
             id: "q11",
-            label: "Estado fruta",
+            label: "12.- Estado fruta",
             options: [
               "Pulpa",
               "Entera congelada",
@@ -328,17 +355,17 @@
           },
           {
             id: "q12",
-            label: "Variedad",
+            label: "13.- Variedad",
             options: ["Blanca", "Roja/Rosa/Fucsia", "Ambas", "Indiferente"],
           },
           {
             id: "q13",
-            label: "Grado industria",
+            label: "14.- Grado industria",
             options: ["Seleccionada", "Grado industria", "Depende del precio"],
           },
           {
             id: "q14",
-            label: "Lugar entrega",
+            label: "15.- Lugar entrega",
             options: [
               "Planta propia",
               "CEDIS",
@@ -349,22 +376,22 @@
           },
           {
             id: "q14",
-            label: "Flete",
+            label: "16.- Flete",
             options: ["Cliente", "Proveedor", "Depende"],
           },
           {
             id: "q15",
-            label: "Pago",
+            label: "17.- Pago",
             options: ["Contado", "Contra entrega", "Crédito"],
           },
           {
             id: "q16",
-            label: "Crédito",
+            label: "18.- Crédito",
             options: ["7", "15", "30", ">30"],
           },
           {
             id: "q16",
-            label: "Inicio",
+            label: "19.- Inicio",
             options: [
               "Inmediato",
               "Próxima semana",
@@ -374,18 +401,18 @@
           },
         ],
         providers: [
-          { id: "q2", label: "Nombre completo", options: [] },
-          {
+        { id: "q2", label: "1.- ¡Hola! Platícanos un poco de ti ¿Cuál es tu nombre?", options: [] },
+        {
             id: "q3",
-            label: "Teléfono / WhatsApp",
+            label: "2.- Teléfono / WhatsApp",
           },
           {
             id: "q4",
-            label: "Municipio / Estado",
+            label: "3.- Municipio / Estado",
           },
           {
             id: "q5",
-            label: "Perfil",
+            label: "4.- Perfil",
             options: [
               "Proveedor/Empresa",
               "Transportista/Logística",
@@ -397,7 +424,7 @@
           },
           {
             id: "q6",
-            label: "Interés",
+            label: "5.- Interés",
             options: [
               "Ser proveedor de PITAMEX",
               "Ofrecer productos a productores",
@@ -409,19 +436,19 @@
           },
           {
             id: "q7",
-            label: "Contacto",
+            label: "6.- Contacto",
             options: ["WhatsApp", "Llamada", "Correo"],
           },
         ],
         info: [
-          { id: "q2", label: "Nombre completo", options: [] },
-          {
+        { id: "q2", label: "1.- ¡Hola! Platícanos un poco de ti ¿Cuál es tu nombre?", options: [] },
+        {
             id: "q3",
-            label: "Teléfono / WhatsApp",
+            label: "2.- Teléfono / WhatsApp",
           },
           {
             id: "q4",
-            label: "Municipio / Estado",
+            label: "3.- Municipio / Estado",
           },
         ],
       };
