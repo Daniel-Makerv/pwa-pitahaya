@@ -34,7 +34,9 @@ function render() {
       btn.type = "button";
       // Si la opción tiene label, úsalo (para compatibilidad)
       btn.textContent = opt.label || opt;
-      btn.addEventListener("click", () => handleAnswer(q, opt));
+      btn.addEventListener("click", async () => {
+        await handleAnswer(q, opt);
+      });
       content.appendChild(btn);
     });
   } else {
@@ -52,8 +54,9 @@ function render() {
     nextBtn.addEventListener("click", async () => {
       const val = input.value.trim();
       if (!val) return alert("Por favor completa la respuesta.");
-      handleAnswer(q, val);
+      await handleAnswer(q, val);
     });
+    
     content.appendChild(nextBtn);
 
     // 👇 Agrega este bloque para enfocar automáticamente el input
@@ -133,7 +136,7 @@ function render() {
   root.appendChild(step);
 }
 
-function handleAnswer(q, value) {
+async function handleAnswer(q, value) {
   // Guardar respuesta
   answers[q.id] = value.label || value;
   console.log("Respuesta:", q.id, value);
@@ -149,7 +152,49 @@ function handleAnswer(q, value) {
     return;
   }
 
+  // 👉 Si ya estamos en la ÚLTIMA pregunta, finalizar de una vez
+  if (current === QUESTIONS.length - 1) {
+    await finalizeForm();
+    return;
+  }
+
+  // Si no es la última, continuar normal
   nextStep();
+}
+
+async function finalizeForm() {
+  const record = { fecha: new Date().toISOString(), send_api: false };
+
+  // Guardar todas las respuestas
+  QUESTIONS.forEach((q) => {
+    const key = q.uuid || q.id;
+    record[key] = answers[q.id] || "";
+  });
+
+  // ✅ Clasificación por la primera pregunta (FIRST_QUESTION)
+  const respuestaBase = answers[FIRST_QUESTION.id]; // por ejemplo "Planta / Esqueje"
+  const uuidBase = selectedGroup; // su uuid asociado (plantOrEsqueaje, frut, etc.)
+
+  // Insertar el registro en el grupo correspondiente
+  await saveRecord(uuidBase, record);
+
+  // 👇 Sincronización en segundo plano
+  if ("serviceWorker" in navigator && "SyncManager" in window) {
+    const registration = await navigator.serviceWorker.ready;
+    try {
+      await registration.sync.register("sync-data");
+      console.log("📡 Sincronización registrada con éxito");
+    } catch (err) {
+      console.error("❌ No se pudo registrar la sincronización", err);
+      manualSyncSetup(); // fallback automático
+    }
+  } else {
+    console.warn("SyncManager no soportado, se usará sincronización manual");
+    manualSyncSetup();
+  }
+
+  // Mensaje final
+  showFinalMessage(respuestaBase);
 }
 
 async function nextStep() {
