@@ -216,5 +216,5 @@ function manualSyncSetup() {
     if (navigator.onLine) {
       await sendPendingData();
     }
-  }, 120000);
+  }, 50000);
 }
