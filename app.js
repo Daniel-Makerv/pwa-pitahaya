@@ -124,8 +124,6 @@ function render() {
       }
 
       showFinalMessage(respuestaBase);
-
-      resetForm();
     });
 
     nav.appendChild(finish);
