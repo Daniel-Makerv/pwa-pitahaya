@@ -115,11 +115,14 @@ function render() {
           console.log("📡 Sincronización registrada con éxito");
         } catch (err) {
           console.error("❌ No se pudo registrar la sincronización", err);
+          manualSyncSetup(); // fallback automático
         }
       } else {
         console.warn(
           "SyncManager no soportado, se usará sincronización manual"
+          // fallback automático
         );
+        manualSyncSetup();
       }
       resetForm();
     });
@@ -184,3 +187,33 @@ window.addEventListener("load", () => {
       .catch((e) => console.log(e));
   }
 });
+
+// 🔁 Sincronización manual para navegadores sin SyncManager
+function manualSyncSetup() {
+  // Evita múltiples registros
+  if (window._manualSyncInitialized) return;
+  window._manualSyncInitialized = true;
+
+  console.log("⚙️ Configurando sincronización manual...");
+
+  // Cuando el usuario vuelva a tener conexión
+  window.addEventListener("online", async () => {
+    console.log("🌐 Conexión restaurada, enviando datos pendientes...");
+    await sendPendingData();
+  });
+
+  // Intentar sincronizar también al abrir la app
+  document.addEventListener("DOMContentLoaded", async () => {
+    if (navigator.onLine) {
+      console.log("🚀 App abierta con conexión, enviando pendientes...");
+      await sendPendingData();
+    }
+  });
+
+  // Reintentar cada 2 minutos si hay conexión
+  setInterval(async () => {
+    if (navigator.onLine) {
+      await sendPendingData();
+    }
+  }, 120000);
+}

@@ -16,7 +16,7 @@ async function sendPendingData() {
   // Recorremos cada grupo (uuidBase)s
   for (const uuidBase in unsyncedData) {
     const records = unsyncedData[uuidBase];
-
+    console.log(uuidBase);
     let token = "goro4vmm.gd3";
 
     for (const record of records) {
