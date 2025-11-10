@@ -1,3 +1,5 @@
+importScripts("formController.js");
+
 const CACHE_NAME = "pitahaya-cache-v1";
 const ASSETS = [
   "index.html",
