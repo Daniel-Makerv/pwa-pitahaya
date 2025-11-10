@@ -1,4 +1,3 @@
-importScripts("formController.js");
 
 const root = document.getElementById("form-root");
 let current = 0;

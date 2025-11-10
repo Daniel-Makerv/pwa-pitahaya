@@ -4,10 +4,10 @@ const CACHE_NAME = "pitahaya-cache-v1";
 const ASSETS = [
   "index.html",
   "style.css",
+  "formController.js",
   "app.js",
   "db.js",
   "export.js",
-  "formController.js",
   "manifest.json",
   "/media/images/logos/question.png",
   "./libs/js/xlsx.full.min.js",
