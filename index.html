@@ -34,193 +34,229 @@
     <script>
       // Preguntas agrupadas por flujos
       const QUESTION_GROUPS = {
-        // Si selecciona "Productor"
         plantOrEsqueaje: [
           {
             id: "q2",
             label: "1.- ¡Hola! Platícanos un poco de ti ¿Cuál es tu nombre?",
             options: [],
+            uuid: "name_complete",
           },
           {
             id: "q3",
             label: "2.-Teléfono / WhatsApp",
+            uuid: "phone_contact",
           },
           {
             id: "q4",
             label: "3.-Municipio / Estado",
+            uuid: "municipality_state",
           },
           {
             id: "q5",
             label: "4.-Tipo de terreno",
             options: ["Propio", "Rentado", "Ejido"],
+            uuid: "land_type",
           },
           {
             id: "q6",
             label: "5.-Superficie disponible (ha)",
             options: ["0.1", "1", "2-5", "5+"],
+            uuid: "available_surface_ha",
           },
           {
             id: "q4",
             label: "6.-Disponibilidad de agua",
             options: ["Pozo", "Canal", "Pipa", "Solo lluvia"],
+            uuid: "water_availability",
           },
           {
             id: "q7",
             label: "7.- ¿Zona con heladas?",
             options: ["Sí", "No", "No sé"],
+            uuid: "frost_zone",
           },
           {
             id: "q8",
             label: "8.- ¿Tiene energía eléctrica?",
             options: ["Sí", "No"],
+            uuid: "has_electricity",
           },
           {
             id: "q9",
             label: "9.- ¿Cuenta con mano de obra?",
             options: ["Sí", "A veces", "No"],
+            uuid: "has_labor",
           },
           {
             id: "q10",
             label: "10.- Nivel de decisión",
             options: ["100% seguro", "Evaluando", "Solo viendo"],
+            uuid: "decision_level",
           },
           {
             id: "q11",
             label: "11.- Tiempo estimado para iniciar",
             options: ["Inmediato", "Próximo ciclo", "Sin fecha"],
+            uuid: "estimated_start_time",
           },
         ],
-        // Si selecciona "Comercializador"
+
         frut: [
           {
             id: "q2",
             label: "1.- ¡Hola! Platícanos un poco de ti ¿Cuál es tu nombre?",
             options: [],
+            name_complete: "name_complete",
           },
           {
             id: "q3",
             label: "2.-Teléfono / WhatsApp",
+            uuid: "phone_contact",
           },
           {
             id: "q4",
             label: "3.- Ciudad / Estado",
+            uuid: "city_state",
           },
           {
             id: "q5",
             label: "4.- Tipo de fruta",
             options: ["Blanca", "Color", "Ambas"],
+            uuid: "fruit_type",
           },
           {
             id: "q6",
             label: "5.- Volumen",
             options: ["5-50", "50-300", "300-1000", "1000"],
+            uuid: "volume",
           },
           {
             id: "q7",
             label: "6.- Frecuencia",
             options: ["Única", "Semanal", "Quincenal", "Mensual", "Temporada"],
+            uuid: "frequency",
           },
           {
             id: "q8",
-            label: "7.- Presentaciòn",
+            label: "7.- Presentación",
             options: ["Granel", "Caja 5kg", "Caja 6.8kg", "Otro"],
+            uuid: "presentation",
           },
           {
             id: "q9",
             label: "8.- Calidad",
             options: ["Seleccionada", "Comercial", "Segunda"],
+            uuid: "quality",
           },
           {
             id: "q10",
             label: "9.-Lugar de entrega",
             options: ["Negocio", "CEDIS", "Central", "Punto de carga"],
+            uuid: "delivery_place",
           },
           {
             id: "q11",
             label: "10.- Flete",
-            options: ["Cliente", "Proovedor", "Depende"],
+            options: ["Cliente", "Proveedor", "Depende"],
+            uuid: "freight",
           },
           {
             id: "q12",
             label: "11.- Transporte",
-            options: ["Sì", "No"],
+            options: ["Sí", "No"],
+            uuid: "transport",
           },
           {
             id: "q13",
             label: "12.- Pago",
-            options: ["Contado", "Contra entrega", "Crèdito"],
+            options: ["Contado", "Contra entrega", "Crédito"],
+            uuid: "payment",
           },
           {
             id: "q14",
-            label: "13.- Crèdito",
+            label: "13.- Crédito",
             options: ["7", "15", "30", ">30"],
+            uuid: "credit_days",
           },
           {
             id: "q15",
             label: "14.- Inicio",
             options: [
               "Inmediato",
-              "Proxima semana",
-              "Pròximo mes",
+              "Próxima semana",
+              "Próximo mes",
               "Solo viendo",
             ],
+            uuid: "start_time",
           },
         ],
-        // Si selecciona "Consumidor"
+
         asesoryTec: [
           {
             id: "q2",
             label: "1.- ¡Hola! Platícanos un poco de ti ¿Cuál es tu nombre?",
             options: [],
+            uuid: "name_complete",
           },
           {
             id: "q3",
             label: "2.- Teléfono / WhatsApp",
+            uuid: "phone_contact",
           },
           {
             id: "q4",
             label: "3.- Municipio / Estado",
+            uuid: "municipality_state",
           },
           {
             id: "q5",
             label: "4.- Años cultivo",
             options: ["<1", "1-3", "3-7", "7"],
+            uuid: "years_of_cultivation",
           },
           {
             id: "q6",
             label: "5.- Superficie(ha)",
+            uuid: "surface_ha",
           },
           {
             id: "q7",
             label: "6.- Plantas",
+            uuid: "plants",
           },
           {
             id: "q8",
             label: "7.- Variedades",
+            uuid: "varieties",
           },
           {
             id: "q9",
             label: "8.- Propósito",
-            options: ["Local", "Central", "Exportaciòn", "Familiar"],
+            options: ["Local", "Central", "Exportación", "Familiar"],
+            uuid: "purpose",
           },
           {
             id: "q10",
             label: "9.- Tutor",
             options: ["Vivo", "Madera", "Concreto", "Acero", "Mixto"],
+            uuid: "tutor_type",
           },
           {
             id: "q11",
             label: "10.- Riego",
             options: ["Goteo", "Microaspersión", "Pipa", "Temporal"],
+            uuid: "irrigation_type",
           },
           {
             id: "q12",
             label: "11.- Fertilización",
-            options: ["Orgánica", "Orgánica", "Mixta", "No aplica"],
+            options: ["Orgánica", "Mixta", "No aplica"],
+            uuid: "fertilization",
           },
           {
             id: "q13",
             label: "12.- Problemas",
+            uuid: "problems",
           },
           {
             id: "q14",
@@ -231,22 +267,19 @@
               "Plantas amarillas",
               "Enfermedades visibles",
             ],
+            uuid: "crop_status",
           },
           {
             id: "q15",
             label: "14.- Producción",
-            options: ["Inicio", "Media", "Estable ", "Baja", "Detenida"],
+            options: ["Inicio", "Media", "Estable", "Baja", "Detenida"],
+            uuid: "production_status",
           },
           {
             id: "q16",
             label: "15.- Objetivo",
-            options: [
-              "Producción",
-              "Calidad",
-              "Sanidad ",
-              "Podas",
-              "Nutrición",
-            ],
+            options: ["Producción", "Calidad", "Sanidad", "Podas", "Nutrición"],
+            uuid: "objective",
           },
           {
             id: "q17",
@@ -254,9 +287,10 @@
             options: [
               "Diagnóstico",
               "Mensual",
-              "Capacitaciòn",
+              "Capacitación",
               "Visitas puntuales",
             ],
+            uuid: "advisory_type",
           },
           {
             id: "q18",
@@ -267,6 +301,7 @@
               "Personal sin supervisión",
               "Proyecto inactivo",
             ],
+            uuid: "involvement",
           },
           {
             id: "q19",
@@ -277,31 +312,38 @@
               "Depende del costo",
               "Orientación básica",
             ],
+            uuid: "commitment",
           },
           {
             id: "q20",
             label: "19.- Visita",
             options: ["Sí", "No"],
+            uuid: "visit",
           },
         ],
+
         process: [
           {
             id: "q2",
             label: "1.- ¡Hola! Platícanos un poco de ti ¿Cuál es tu nombre?",
             options: [],
+            uuid: "name_complete",
           },
           {
             id: "q3",
             label: "2.- Teléfono / WhatsApp",
+            uuid: "phone_contact",
           },
           {
             id: "q4",
             label: "3.- Ciudad / Estado",
+            uuid: "city_state",
           },
           {
             id: "q5",
             label: "4.- Rol",
             options: ["Propietario", "Compras", "Producción", "Otro"],
+            uuid: "role",
           },
           {
             id: "q6",
@@ -314,11 +356,13 @@
               "Cosmética",
               "Investigación",
             ],
+            uuid: "use",
           },
           {
             id: "q7",
             label: "8.- Planta",
             options: ["Sí propia", "Sí maquila", "No"],
+            uuid: "has_plant",
           },
           {
             id: "q8",
@@ -327,19 +371,22 @@
               "IQF",
               "Pulpa congelada",
               "Liofilizado",
-              "Deshidratado convectivo",
+              "Deshidratado",
               "Otro",
             ],
+            uuid: "process_type",
           },
           {
             id: "q9",
             label: "10.- Volumen",
             options: ["50-200", "200-600", "600-1500", "1500"],
+            uuid: "volume",
           },
           {
             id: "q10",
             label: "11.- Frecuencia",
             options: ["Única", "Semanal", "Quincenal", "Mensual", "Temporada"],
+            uuid: "frequency",
           },
           {
             id: "q11",
@@ -352,16 +399,19 @@
               "Deshidratada cubo",
               "No definido",
             ],
+            uuid: "fruit_state",
           },
           {
             id: "q12",
             label: "13.- Variedad",
             options: ["Blanca", "Roja/Rosa/Fucsia", "Ambas", "Indiferente"],
+            uuid: "variety",
           },
           {
             id: "q13",
             label: "14.- Grado industria",
             options: ["Seleccionada", "Grado industria", "Depende del precio"],
+            uuid: "industry_grade",
           },
           {
             id: "q14",
@@ -373,24 +423,28 @@
               "Transportista",
               "Por definir",
             ],
-          },
-          {
-            id: "q14",
-            label: "16.- Flete",
-            options: ["Cliente", "Proveedor", "Depende"],
+            uuid: "delivery_place",
           },
           {
             id: "q15",
+            label: "16.- Flete",
+            options: ["Cliente", "Proveedor", "Depende"],
+            uuid: "freight",
+          },
+          {
+            id: "q16",
             label: "17.- Pago",
             options: ["Contado", "Contra entrega", "Crédito"],
+            uuid: "payment",
           },
           {
-            id: "q16",
+            id: "q17",
             label: "18.- Crédito",
             options: ["7", "15", "30", ">30"],
+            uuid: "credit_days",
           },
           {
-            id: "q16",
+            id: "q18",
             label: "19.- Inicio",
             options: [
               "Inmediato",
@@ -398,17 +452,26 @@
               "Próximo mes",
               "Solo evaluando",
             ],
+            uuid: "start_time",
           },
         ],
+
         providers: [
-        { id: "q2", label: "1.- ¡Hola! Platícanos un poco de ti ¿Cuál es tu nombre?", options: [] },
-        {
+          {
+            id: "q2",
+            label: "1.- ¡Hola! Platícanos un poco de ti ¿Cuál es tu nombre?",
+            options: [],
+            uuid: "name_complete",
+          },
+          {
             id: "q3",
             label: "2.- Teléfono / WhatsApp",
+            uuid: "phone_contact",
           },
           {
             id: "q4",
             label: "3.- Municipio / Estado",
+            uuid: "municipality_state",
           },
           {
             id: "q5",
@@ -421,6 +484,7 @@
               "ONG/Proyecto Social",
               "Otro",
             ],
+            uuid: "profile",
           },
           {
             id: "q6",
@@ -433,22 +497,32 @@
               "Investigación/Proyecto",
               "Información",
             ],
+            uuid: "interest",
           },
           {
             id: "q7",
             label: "6.- Contacto",
             options: ["WhatsApp", "Llamada", "Correo"],
+            uuid: "contact_method",
           },
         ],
+
         info: [
-        { id: "q2", label: "1.- ¡Hola! Platícanos un poco de ti ¿Cuál es tu nombre?", options: [] },
-        {
+          {
+            id: "q2",
+            label: "1.- ¡Hola! Platícanos un poco de ti ¿Cuál es tu nombre?",
+            options: [],
+            uuid: "name_complete",
+          },
+          {
             id: "q3",
             label: "2.- Teléfono / WhatsApp",
+            uuid: "phone_contact",
           },
           {
             id: "q4",
             label: "3.- Municipio / Estado",
+            uuid: "municipality_state",
           },
         ],
       };

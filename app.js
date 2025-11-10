@@ -95,7 +95,8 @@ function render() {
 
       // Guardar todas las respuestas
       QUESTIONS.forEach((q) => {
-        record[q.label] = answers[q.id] || "";
+        const key = q.uuid || q.id;
+        record[key] = answers[q.id] || "";
       });
 
       // ✅ Clasificación por la primera pregunta (FIRST_QUESTION)
