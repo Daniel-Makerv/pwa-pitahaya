@@ -1,3 +1,5 @@
+importScripts("db.js");
+
 async function sendPendingData() {
   const unsyncedData = await getUnsyncedRecords();
 
