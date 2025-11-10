@@ -25,8 +25,14 @@ async function sendPendingData() {
           "https://admin-pitahaya.brounieapps.com/api/create/form",
           {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(record, uuidBase, token),
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`, // 👈 token por header
+            },
+            body: JSON.stringify({
+              uuid: uuidBase, // 👈 mandamos el uuid aquí
+              data: record, // 👈 mandamos el registro
+            }),
           }
         );
 
