@@ -7,6 +7,8 @@ const ASSETS = [
   "export.js",
   "manifest.json",
   "/media/images/logos/question.png",
+  "./libs/js/xlsx.full.min.js",
+
 ];
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE_NAME).then((c) => c.addAll(ASSETS)));

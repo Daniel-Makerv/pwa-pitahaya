@@ -1,7 +1,8 @@
 document.getElementById("export").addEventListener("click", async () => {
-  const data = JSON.parse(localStorage.getItem("recordsData"));
+  // 🔹 Obtener los datos desde IndexedDB
+  const data = await getRecords(); // usando la función del helper db.js
 
-  if (!data) {
+  if (!data || Object.keys(data).length === 0) {
     alert("⚠️ No hay registros para exportar");
     return;
   }
@@ -15,13 +16,13 @@ document.getElementById("export").addEventListener("click", async () => {
     asesoryTec: "Productor_Asesoria_Registro",
     process: "Procesado_Registro",
     providers: "Proveedores_Alianzas_Registro",
-    info: "Solo Información",
+    info: "Solo_Información",
   };
 
-  // Recorremos cada grupo y creamos una hoja si hay registros
+  // 🔹 Recorremos cada grupo y creamos una hoja si hay registros
   for (const [grupo, registros] of Object.entries(data)) {
-    if (registros.length > 0) {
-      const titleSheet = titlesSheet[grupo];
+    if (registros && registros.length > 0) {
+      const titleSheet = titlesSheet[grupo] || grupo;
       const hoja = XLSX.utils.json_to_sheet(registros);
       XLSX.utils.book_append_sheet(workbook, hoja, titleSheet);
       tieneDatos = true;
@@ -33,8 +34,11 @@ document.getElementById("export").addEventListener("click", async () => {
     return;
   }
 
-  const nombreArchivo = `registros_pitahaya_${
-    new Date().toISOString().split("T")[0]
-  }.xlsx`;
+  // 🔹 Generar el nombre del archivo
+  const nombreArchivo = `registros_pitahaya_${new Date()
+    .toISOString()
+    .split("T")[0]}.xlsx`;
+
+  // 🔹 Exportar el Excel
   XLSX.writeFile(workbook, nombreArchivo);
 });

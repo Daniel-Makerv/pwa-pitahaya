@@ -39,7 +39,7 @@ body::before {
 h1 {
   font-size: 22px;
   margin-bottom: 18px;
-  color: #ff6600;
+  color: #000000;
 }
 
 .logo {
@@ -76,8 +76,8 @@ h1 {
   border-radius: 8px;
   font-size: 15px;
   cursor: pointer;
-  background: #ff6600;
-  color: white;
+  background: #ffffff;
+  color: dark;
 }
 
 .btn.secondary {

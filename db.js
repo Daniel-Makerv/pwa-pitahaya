@@ -1,35 +1,78 @@
+// --- db.js ---
 const DB_NAME = "pitahayaDB";
 const DB_VERSION = 1;
-let db;
+const STORE_NAME = "records";
+
 function openDB() {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, DB_VERSION);
-    request.onupgradeneeded = (e) => {
-      db = e.target.result;
-      if (!db.objectStoreNames.contains("registros")) {
-        db.createObjectStore("registros", { keyPath: "id", autoIncrement: true });
+
+    request.onupgradeneeded = (event) => {
+      const db = event.target.result;
+      if (!db.objectStoreNames.contains(STORE_NAME)) {
+        db.createObjectStore(STORE_NAME, { keyPath: "uuidBase" });
       }
     };
-    request.onsuccess = (e) => { db = e.target.result; resolve(db); };
-    request.onerror = (e) => reject(e);
+
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
   });
 }
-async function saveRecord(data) {
-  const database = await openDB();
-  return new Promise((res, rej) => {
-    const tx = database.transaction("registros", "readwrite");
-    const store = tx.objectStore("registros");
-    const req = store.add(data);
-    req.onsuccess = () => res(req.result);
-    req.onerror = (e) => rej(e);
+
+async function getRecords() {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, "readonly");
+    const store = tx.objectStore(STORE_NAME);
+    const req = store.getAll();
+    req.onsuccess = () => {
+      const data = {};
+      req.result.forEach((item) => {
+        data[item.uuidBase] = item.records;
+      });
+      resolve(data);
+    };
+    req.onerror = () => reject(req.error);
   });
 }
-async function getAllRecords() {
-  const database = await openDB();
-  return new Promise((resolve) => {
-    const tx = database.transaction("registros", "readonly");
-    const store = tx.objectStore("registros");
-    const request = store.getAll();
-    request.onsuccess = () => resolve(request.result || []);
+
+async function saveRecord(uuidBase, record) {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, "readwrite");
+    const store = tx.objectStore(STORE_NAME);
+
+    const getReq = store.get(uuidBase);
+    getReq.onsuccess = () => {
+      const existing = getReq.result || { uuidBase, records: [] };
+      existing.records.push(record);
+      store.put(existing);
+      resolve(true);
+    };
+    getReq.onerror = () => reject(getReq.error);
+  });
+}
+
+async function initRecords() {
+  const db = await openDB();
+  const tx = db.transaction(STORE_NAME, "readwrite");
+  const store = tx.objectStore(STORE_NAME);
+
+  const defaults = [
+    "plantOrEsqueaje",
+    "frut",
+    "asesoryTec",
+    "process",
+    "providers",
+    "info",
+  ];
+
+  defaults.forEach((uuidBase) => {
+    const req = store.get(uuidBase);
+    req.onsuccess = () => {
+      if (!req.result) {
+        store.put({ uuidBase, records: [] });
+      }
+    };
   });
 }

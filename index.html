@@ -3,14 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Registro Pitahaya Org</title>
+    <title>Registro</title>
     <link rel="manifest" href="manifest.json" />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <main class="container">
       <img src="./media/images/logos/logo.webp" alt="Pitamex" class="logo" />
-      <h1>Registro Pitahaya Orgs</h1>
+      <h1>Registro</h1>
 
       <div id="form-root"></div>
 
@@ -18,10 +18,10 @@
         <button id="export">📤 Exportar a Excel</button>
       </div>
     </main>
+    <script src="./libs/js/xlsx.full.min.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script>
-      // Preguntas agrupadas por flujo
+      // Preguntas agrupadas por flujos
       const QUESTION_GROUPS = {
         // Si selecciona "Productor"
         plantOrEsqueaje: [
@@ -158,6 +158,108 @@
             id: "q4",
             label: "Municipio / Estado",
           },
+          {
+            id: "q5",
+            label: "Años cultivo",
+            options: ["<1", "1-3", "3-7", "7"],
+          },
+          {
+            id: "q6",
+            label: "Superficie(ha)",
+          },
+          {
+            id: "q7",
+            label: "Plantas",
+          },
+          {
+            id: "q8",
+            label: "Variedades",
+          },
+          {
+            id: "q9",
+            label: "Propósito",
+            options: ["Local", "Central", "Exportaciòn", "Familiar"],
+          },
+          {
+            id: "q10",
+            label: "Tutor",
+            options: ["Vivo", "Madera", "Concreto", "Acero", "Mixto"],
+          },
+          {
+            id: "q11",
+            label: "Riego",
+            options: ["Goteo", "Microaspersión", "Pipa", "Temporal"],
+          },
+          {
+            id: "q12",
+            label: "Fertilización",
+            options: ["Orgánica", "Orgánica", "Mixta", "No aplica"],
+          },
+          {
+            id: "q13",
+            label: "Problemas",
+          },
+          {
+            id: "q14",
+            label: "Estado cultivo",
+            options: [
+              "Plantas fuertes",
+              "Plantas lentas",
+              "Plantas amarillas",
+              "Enfermedades visibles",
+            ],
+          },
+          {
+            id: "q15",
+            label: "Producción",
+            options: ["Inicio", "Media", "Estable ", "Baja", "Detenida"],
+          },
+          {
+            id: "q16",
+            label: "Objetivo",
+            options: [
+              "Producción",
+              "Calidad",
+              "Sanidad ",
+              "Podas",
+              "Nutrición",
+            ],
+          },
+          {
+            id: "q17",
+            label: "Tipo asesoría",
+            options: [
+              "Diagnóstico",
+              "Mensual",
+              "Capacitaciòn",
+              "Visitas puntuales",
+            ],
+          },
+          {
+            id: "q18",
+            label: "Involucramiento",
+            options: [
+              "Yo mismo",
+              "Superviso personal",
+              "Personal sin supervisión",
+              "Proyecto inactivo",
+            ],
+          },
+          {
+            id: "q19",
+            label: "Compromiso",
+            options: [
+              "100%",
+              "Intermedio",
+              "Depende del costo",
+              "Orientación básica",
+            ],
+          },
+          {
+            id: "q20",
+            label: "Visita",
+            options: ["Sí", "No"],
+          },
         ],
         process: [
           { id: "q2", label: "Nombre completo", options: [] },
@@ -167,7 +269,108 @@
           },
           {
             id: "q4",
-            label: "Municipio / Estado",
+            label: "Ciudad / Estado",
+          },
+          {
+            id: "q5",
+            label: "Rol",
+            options: ["Propietario", "Compras", "Producción", "Otro"],
+          },
+          {
+            id: "q6",
+            label: "Uso",
+            options: [
+              "Congelado",
+              "Deshidratado",
+              "Pulpa",
+              "Jugo",
+              "Cosmética",
+              "Investigación",
+            ],
+          },
+          {
+            id: "q7",
+            label: "Planta",
+            options: ["Sí propia", "Sí maquila", "No"],
+          },
+          {
+            id: "q8",
+            label: "Proceso",
+            options: [
+              "IQF",
+              "Pulpa congelada",
+              "Liofilizado",
+              "Deshidratado convectivo",
+              "Otro",
+            ],
+          },
+          {
+            id: "q9",
+            label: "Volumen",
+            options: ["50-200", "200-600", "600-1500", "1500"],
+          },
+          {
+            id: "q10",
+            label: "Frecuencia",
+            options: ["Única", "Semanal", "Quincenal", "Mensual", "Temporada"],
+          },
+          {
+            id: "q11",
+            label: "Estado fruta",
+            options: [
+              "Pulpa",
+              "Entera congelada",
+              "Trozos",
+              "Deshidratada lámina",
+              "Deshidratada cubo",
+              "No definido",
+            ],
+          },
+          {
+            id: "q12",
+            label: "Variedad",
+            options: ["Blanca", "Roja/Rosa/Fucsia", "Ambas", "Indiferente"],
+          },
+          {
+            id: "q13",
+            label: "Grado industria",
+            options: ["Seleccionada", "Grado industria", "Depende del precio"],
+          },
+          {
+            id: "q14",
+            label: "Lugar entrega",
+            options: [
+              "Planta propia",
+              "CEDIS",
+              "Central",
+              "Transportista",
+              "Por definir",
+            ],
+          },
+          {
+            id: "q14",
+            label: "Flete",
+            options: ["Cliente", "Proveedor", "Depende"],
+          },
+          {
+            id: "q15",
+            label: "Pago",
+            options: ["Contado", "Contra entrega", "Crédito"],
+          },
+          {
+            id: "q16",
+            label: "Crédito",
+            options: ["7", "15", "30", ">30"],
+          },
+          {
+            id: "q16",
+            label: "Inicio",
+            options: [
+              "Inmediato",
+              "Próxima semana",
+              "Próximo mes",
+              "Solo evaluando",
+            ],
           },
         ],
         providers: [
@@ -179,6 +382,35 @@
           {
             id: "q4",
             label: "Municipio / Estado",
+          },
+          {
+            id: "q5",
+            label: "Perfil",
+            options: [
+              "Proveedor/Empresa",
+              "Transportista/Logística",
+              "Servicio Técnico/Consultor",
+              "Perfil académico (Estudiante/Investigación/Universidad)",
+              "ONG/Proyecto Social",
+              "Otro",
+            ],
+          },
+          {
+            id: "q6",
+            label: "Interés",
+            options: [
+              "Ser proveedor de PITAMEX",
+              "Ofrecer productos a productores",
+              "Alianza/Colaboración",
+              "Práctica/Residencia",
+              "Investigación/Proyecto",
+              "Información",
+            ],
+          },
+          {
+            id: "q7",
+            label: "Contacto",
+            options: ["WhatsApp", "Llamada", "Correo"],
           },
         ],
         info: [

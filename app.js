@@ -103,16 +103,7 @@ function render() {
       };
 
       // Insertar el registro en el grupo correspondiente
-      if (recordsData[uuidBase]) {
-        recordsData[uuidBase].push(record);
-      } else {
-        // Si por alguna razón no existe la clave, se crea
-        recordsData[uuidBase] = [record];
-      }
-
-      // Guardar en localStorage
-      localStorage.setItem("recordsData", JSON.stringify(recordsData));
-
+      await saveRecord(uuidBase, record);
       alert(`✅ Registro guardado en el grupo: ${respuestaBase}`);
       resetForm();
     });
@@ -158,18 +149,16 @@ function resetForm() {
 
 window.addEventListener("load", () => {
   // ✅ Inicializar recordsData si no existe
-  if (!localStorage.getItem("recordsData")) {
-    const initialData = {
-      plantOrEsqueaje: [],
-      frut: [],
-      asesoryTec: [],
-      process: [],
-      providers: [],
-      info: [],
-    };
-    localStorage.setItem("recordsData", JSON.stringify(initialData));
-    console.log("📦 recordsData inicializado en localStorage");
-  }
+  window.addEventListener("load", async () => {
+    await initRecords();
+    render();
+
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker
+        .register("service-worker.js")
+        .catch(console.error);
+    }
+  });
 
   render();
 
