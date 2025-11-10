@@ -105,8 +105,6 @@ function render() {
 
       // Insertar el registro en el grupo correspondiente
       await saveRecord(uuidBase, record);
-      alert(`✅ Registro guardado en el grupo: ${respuestaBase}`);
-
       // 👇👇 Agrega esto para registrar la sincronización
       if ("serviceWorker" in navigator && "SyncManager" in window) {
         const registration = await navigator.serviceWorker.ready;
@@ -256,5 +254,5 @@ function showFinalMessage() {
   setTimeout(() => {
     resetForm();
     render();
-  }, 10000);
+  }, 5000);
 }
