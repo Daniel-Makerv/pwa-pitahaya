@@ -186,13 +186,19 @@ async function finalizeForm() {
   if (navigator.onLine) {
     console.log("🌐 Conexión disponible, enviando inmediatamente...");
     try {
-      const token = "goro4vmm.gd3";
+      const token = "goro4vmm.gd3"; // tu token actual
       const response = await fetch(
         "https://admin-pitahaya.brounieapps.com/api/create/form",
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ...record, uuidBase, token }),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            uuid: uuidBase,
+            data: record,
+          }),
         }
       );
 
