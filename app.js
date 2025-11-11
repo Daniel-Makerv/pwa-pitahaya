@@ -94,8 +94,7 @@ function render() {
     finish.textContent = "Finalizar y guardar";
 
     finish.addEventListener("click", async () => {
-      const record = { fecha: new Date().toISOString(), send_api: false };
-
+      const record = { id: crypto.randomUUID(), fecha: new Date().toISOString(), send_api: false };
       // Guardar todas las respuestas
       QUESTIONS.forEach((q) => {
         const key = q.uuid || q.id;
