@@ -1,9 +1,25 @@
 importScripts("db.js");
 
+// Helpers para trabajar con IndexedDB usando Promesas
+function getFromStore(store, key) {
+  return new Promise((resolve, reject) => {
+    const req = store.get(key);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+function putInStore(store, data) {
+  return new Promise((resolve, reject) => {
+    const req = store.put(data);
+    req.onsuccess = () => resolve();
+    req.onerror = () => reject(req.error);
+  });
+}
+
 async function sendPendingData() {
   const unsyncedData = await getUnsyncedRecords();
 
-  // Si no hay datos pendientes, salimos
   if (Object.keys(unsyncedData).length === 0) {
     console.log("✅ No hay registros pendientes por enviar.");
     return;
@@ -13,11 +29,9 @@ async function sendPendingData() {
   const tx = db.transaction(STORE_NAME, "readwrite");
   const store = tx.objectStore(STORE_NAME);
 
-  // Recorremos cada grupo (uuidBase)s
   for (const uuidBase in unsyncedData) {
     const records = unsyncedData[uuidBase];
-    console.log(uuidBase);
-    let token = "goro4vmm.gd3";
+    const token = "goro4vmm.gd3";
 
     for (const record of records) {
       try {
@@ -27,38 +41,37 @@ async function sendPendingData() {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`, // 👈 token por header
+              Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({
-              uuid: uuidBase, // 👈 mandamos el uuid aquí
-              data: record, // 👈 mandamos el registro
+              uuid: uuidBase,
+              data: record,
             }),
           }
         );
 
         if (response.ok) {
-          // 🔹 Si se envió correctamente, marcamos el registro como enviado
-          const storedGroup = await store.get(uuidBase);
-          storedGroup.onsuccess = () => {
-            const groupData = storedGroup.result;
-            const index = groupData.records.findIndex(
-              (r) => r.id === record.id
-            );
+          // ✅ Leer grupo actual desde IndexedDB
+          const groupData = await getFromStore(store, uuidBase);
+          if (!groupData || !groupData.records) continue;
 
-            if (index !== -1) {
-              groupData.records[index].send_api = true;
-              store.put(groupData);
-              console.log("✅ Registro sincronizado:", record);
-            }
-          };
+          // Buscar el registro y marcarlo como enviado
+          const index = groupData.records.findIndex((r) => r.id === record.id);
+
+          if (index !== -1) {
+            groupData.records[index].send_api = true;
+            await putInStore(store, groupData);
+            console.log("✅ Registro sincronizado:", record.id);
+          }
         } else {
-          console.error("❌ Error del servidor al sincronizar:", record);
-          console.error(response);
+          console.error("❌ Error del servidor al sincronizar:", record.id);
         }
       } catch (error) {
         console.warn("⚠️ Sin conexión. Se intentará más tarde.");
-        return; // Detenemos para no seguir intentando
+        return; // detener el bucle si no hay conexión
       }
     }
   }
+
+  console.log("🎉 Sincronización completada.");
 }
