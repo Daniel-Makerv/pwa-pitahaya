@@ -1,6 +1,6 @@
 importScripts("db.js");
 
-// Helpers para trabajar con IndexedDB usando Promesas
+// Helpers para IndexedDB con promesas
 function getFromStore(store, key) {
   return new Promise((resolve, reject) => {
     const req = store.get(key);
@@ -50,12 +50,11 @@ async function sendPendingData() {
           }
         );
 
+        // 🔹 Si la respuesta fue exitosa
         if (response.ok) {
-          // ✅ Leer grupo actual desde IndexedDB
           const groupData = await getFromStore(store, uuidBase);
           if (!groupData || !groupData.records) continue;
 
-          // Buscar el registro y marcarlo como enviado
           const index = groupData.records.findIndex((r) => r.id === record.id);
 
           if (index !== -1) {
@@ -63,15 +62,34 @@ async function sendPendingData() {
             await putInStore(store, groupData);
             console.log("✅ Registro sincronizado:", record.id);
           }
-        } else {
-          console.error("❌ Error del servidor al sincronizar:", record.id);
+        }
+        // 🔹 Si hubo un error HTTP (4xx, 5xx)
+        else {
+          console.error(
+            `❌ Error del servidor [${response.status}] al sincronizar:`,
+            record.id
+          );
+
+          try {
+            const errorText = await response.text();
+            console.error("📩 Respuesta del servidor:", errorText);
+          } catch (err) {
+            console.error("⚠️ No se pudo leer el cuerpo de la respuesta:", err);
+          }
         }
       } catch (error) {
-        console.warn("⚠️ Sin conexión. Se intentará más tarde.");
-        return; // detener el bucle si no hay conexión
+        // 🔹 Error de red o sin conexión
+        console.warn("⚠️ Sin conexión o error de red:", error.message);
+        return; // Detenemos para intentar más tarde
       }
     }
   }
 
-  console.log("🎉 Sincronización completada.");
+  tx.oncomplete = () => {
+    console.log("🎉 Transacción completada correctamente.");
+  };
+
+  tx.onerror = (e) => {
+    console.error("❌ Error en la transacción IndexedDB:", e.target.error);
+  };
 }
