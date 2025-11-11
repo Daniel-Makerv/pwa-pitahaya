@@ -56,7 +56,7 @@ function render() {
       if (!val) return alert("Por favor completa la respuesta.");
       await handleAnswer(q, val);
     });
-    
+
     content.appendChild(nextBtn);
 
     // 👇 Agrega este bloque para enfocar automáticamente el input
@@ -94,7 +94,11 @@ function render() {
     finish.textContent = "Finalizar y guardar";
 
     finish.addEventListener("click", async () => {
-      const record = { id: crypto.randomUUID(), fecha: new Date().toISOString(), send_api: false };
+      const record = {
+        id: crypto.randomUUID(),
+        fecha: new Date().toISOString(),
+        send_api: false,
+      };
       // Guardar todas las respuestas
       QUESTIONS.forEach((q) => {
         const key = q.uuid || q.id;
@@ -176,9 +180,37 @@ async function finalizeForm() {
   const uuidBase = selectedGroup; // su uuid asociado (plantOrEsqueaje, frut, etc.)
 
   // Insertar el registro en el grupo correspondiente
+  // Insertar el registro en el grupo correspondiente
   await saveRecord(uuidBase, record);
 
-  // 👇 Sincronización en segundo plano
+  if (navigator.onLine) {
+    console.log("🌐 Conexión disponible, enviando inmediatamente...");
+    try {
+      const token = "goro4vmm.gd3";
+      const response = await fetch(
+        "https://admin-pitahaya.brounieapps.com/api/create/form",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...record, uuidBase, token }),
+        }
+      );
+
+      if (response.ok) {
+        console.log("✅ Registro enviado correctamente.");
+        record.send_api = true;
+        await saveRecord(uuidBase, record); // actualizar estado local
+      } else {
+        console.warn("⚠️ Error al enviar, se guardará localmente.");
+      }
+    } catch (err) {
+      console.error("❌ Error en envío inmediato:", err);
+    }
+  } else {
+    console.log("📴 Sin conexión, se guardará para envío posterior.");
+  }
+
+  // 👇 Si no hay conexión o falla, usar SyncManager para sincronizar luego
   if ("serviceWorker" in navigator && "SyncManager" in window) {
     const registration = await navigator.serviceWorker.ready;
     try {
@@ -186,7 +218,7 @@ async function finalizeForm() {
       console.log("📡 Sincronización registrada con éxito");
     } catch (err) {
       console.error("❌ No se pudo registrar la sincronización", err);
-      manualSyncSetup(); // fallback automático
+      manualSyncSetup();
     }
   } else {
     console.warn("SyncManager no soportado, se usará sincronización manual");
