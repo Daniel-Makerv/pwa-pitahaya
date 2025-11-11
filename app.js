@@ -101,6 +101,7 @@ function render() {
         const key = q.uuid || q.id;
         record[key] = answers[q.id] || "";
       });
+      console.log(record);
 
       // ✅ Clasificación por la primera pregunta (FIRST_QUESTION)
       const respuestaBase = answers[FIRST_QUESTION.id]; // por ejemplo "Planta / Esqueje"
@@ -259,7 +260,7 @@ function manualSyncSetup() {
     if (navigator.onLine) {
       await sendPendingData();
     }
-  }, 50000);
+  }, 30000);
 }
 
 function showFinalMessage() {
