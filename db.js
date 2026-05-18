@@ -60,11 +60,12 @@ async function initRecords() {
 
   const defaults = [
     "plantOrEsqueaje",
-    "frut",
-    "asesoryTec",
-    "process",
-    "providers",
-    "info",
+    "productive_alliances",
+    "commercial_channels",
+    "technical_advice",
+    "processing_frozen",
+    "collaborations",
+    "info"
   ];
 
   defaults.forEach((uuidBase) => {

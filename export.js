@@ -12,11 +12,12 @@ document.getElementById("export").addEventListener("click", async () => {
 
   const titlesSheet = {
     plantOrEsqueaje: "Planta_Esqueaje",
-    frut: "Fruta_Fresca_Registro",
-    asesoryTec: "Productor_Asesoria_Registro",
-    process: "Procesado_Registro",
+    productive_alliances: "alianzas_productivas",
+    technical_advice: "asesoría_técnica",
+    processing_frozen: "Proceso_congelado_deshidratado",
     providers: "Proveedores_Alianzas_Registro",
-    info: "Solo_Información",
+    collaborations: "colaboraciones",
+    info: "Solo_informacion",
   };
 
   // 🔹 Recorremos cada grupo y creamos una hoja si hay registros

@@ -1,563 +1,1006 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Registro</title>
-    <link rel="manifest" href="manifest.json" />
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <div class="page">
-      <!-- Marcos laterales con imágenes -->
-      <div class="frame-left">
-        <img src="./media/images/logos/borde1.png" alt="Borde izquierdo" />
-      </div>
-      <div class="frame-right">
-        <img src="./media/images/logos/borde2.png" alt="Borde derecho" />
-      </div>
 
-      <!-- Contenido central -->
-      <main class="content">
-        <section class="card">
-          <div id="form-root"></div>
-          <img
-            src="./media/images/logos/logo.webp"
-            alt="logo"
-            class="card-logo"
-          />
-        </section>
-      </main>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registro</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div class="page">
+    <!-- Marcos laterales con imágenes -->
+    <div class="frame-left">
+      <img src="./media/images/logos/borde1.png" alt="Borde izquierdo" />
     </div>
-    <script src="./libs/js/xlsx.full.min.js"></script>
+    <div class="frame-right">
+      <img src="./media/images/logos/borde2.png" alt="Borde derecho" />
+    </div>
 
-    <script>
-      // Preguntas agrupadas por flujos
-      const QUESTION_GROUPS = {
-        plantOrEsqueaje: [
-          {
-            id: "q2",
-            label: "1.- ¡Hola! Platícanos un poco de ti ¿Cuál es tu nombre?",
-            options: [],
-            uuid: "name_complete",
-          },
-          {
-            id: "q3",
-            label: "2.-Teléfono / WhatsApp",
-            uuid: "phone_contact",
-          },
-          {
-            id: "q4",
-            label: "3.-Municipio / Estado",
-            uuid: "municipality_state",
-          },
-          {
-            id: "q5",
-            label: "4.-Tipo de terreno",
-            options: ["Propio", "Rentado", "Ejido"],
-            uuid: "land_type",
-          },
-          {
-            id: "q6",
-            label: "5.-Superficie disponible (ha)",
-            options: ["0.1", "1", "2-5", "5+"],
-            uuid: "available_surface_ha",
-          },
-          {
-            id: "q7",
-            label: "6.-Disponibilidad de agua",
-            options: ["Pozo", "Canal", "Pipa", "Solo lluvia"],
-            uuid: "water_availability",
-          },
-          {
-            id: "q8",
-            label: "7.- ¿Zona con heladas?",
-            options: ["Sí", "No", "No sé"],
-            uuid: "frost_zone",
-          },
-          {
-            id: "q9",
-            label: "8.- ¿Tiene energía eléctrica?",
-            options: ["Sí", "No"],
-            uuid: "has_electricity",
-          },
-          {
-            id: "q10",
-            label: "9.- ¿Cuenta con mano de obra?",
-            options: ["Sí", "A veces", "No"],
-            uuid: "has_labor",
-          },
-          {
-            id: "q11",
-            label: "10.- Nivel de decisión",
-            options: ["100% seguro", "Evaluando", "Solo viendo"],
-            uuid: "decision_level",
-          },
-          {
-            id: "q12",
-            label: "11.- ¿en qué cultivos tienes experiencia?",
-            uuid: "why_experience_cultive",
-          },
-          {
-            id: "q13",
-            label: "12.- Tiempo estimado para iniciar",
-            options: ["Inmediato", "Próximo ciclo", "Sin fecha"],
-            uuid: "estimated_start_time",
-          },
-        ],
+    <!-- Contenido central -->
+    <main class="content">
+      <section class="card">
+        <div id="form-root"></div>
+        <img src="./media/images/logos/logo.webp" alt="logo" class="card-logo" />
+      </section>
+    </main>
+  </div>
+  <script src="./libs/js/xlsx.full.min.js"></script>
 
-        frut: [
-          {
-            id: "q2",
-            label: "1.- ¡Hola! Platícanos un poco de ti ¿Cuál es tu nombre?",
-            options: [],
-            uuid: "name_complete",
-          },
-          {
-            id: "q3",
-            label: "2.-Teléfono / WhatsApp",
-            uuid: "phone_contact",
-          },
-          {
-            id: "q4",
-            label: "3.- Ciudad / Estado",
-            uuid: "city_state",
-          },
-          {
-            id: "q5",
-            label: "4.- Tipo de fruta",
-            options: ["Blanca", "Color", "Ambas"],
-            uuid: "fruit_type",
-          },
-          {
-            id: "q6",
-            label: "5.- Volumen",
-            options: ["5-50", "50-300", "300-1000", "1000"],
-            uuid: "volume",
-          },
-          {
-            id: "q7",
-            label: "6.- Frecuencia",
-            options: ["Única", "Semanal", "Quincenal", "Mensual", "Temporada"],
-            uuid: "frequency",
-          },
-          {
-            id: "q8",
-            label: "7.- Presentación",
-            options: ["Granel", "Caja 5kg", "Caja 6.8kg", "Otro"],
-            uuid: "presentation",
-          },
-          {
-            id: "q9",
-            label: "8.- Calidad",
-            options: ["Seleccionada", "Comercial", "Segunda"],
-            uuid: "quality",
-          },
-          {
-            id: "q10",
-            label: "9.-Lugar de entrega",
-            options: ["Negocio", "CEDIS", "Central", "Punto de carga"],
-            uuid: "delivery_place",
-          },
-          {
-            id: "q11",
-            label: "10.- Flete",
-            options: ["Cliente", "Proveedor", "Depende"],
-            uuid: "freight",
-          },
-          {
-            id: "q12",
-            label: "11.- Transporte",
-            options: ["Sí", "No"],
-            uuid: "transport",
-          },
-          {
-            id: "q13",
-            label: "12.- Pago",
-            options: ["Contado", "Contra entrega", "Crédito"],
-            uuid: "payment",
-          },
-          {
-            id: "q14",
-            label: "13.- Crédito",
-            options: ["7", "15", "30", ">30"],
-            uuid: "credit_days",
-          },
-          {
-            id: "q15",
-            label: "14.- Inicio",
-            options: [
-              "Inmediato",
-              "Próxima semana",
-              "Próximo mes",
-              "Solo viendo",
-            ],
-            uuid: "start_time",
-          },
-        ],
+  <script>
+    // Preguntas agrupadas por flujos
+    // const QUESTION_GROUPS = {
+    //   plantOrEsqueaje: [
+    //     {
+    //       id: "q2",
+    //       label: "1.- ¡Hola! Platícanos un poco de ti ¿Cuál es tu nombre?",
+    //       options: [],
+    //       uuid: "name_complete",
+    //     },
+    //     {
+    //       id: "q3",
+    //       label: "2.-Teléfono / WhatsApp",
+    //       uuid: "phone_contact",
+    //     },
+    //     {
+    //       id: "q4",
+    //       label: "3.-Municipio / Estado",
+    //       uuid: "municipality_state",
+    //     },
+    //     {
+    //       id: "q5",
+    //       label: "4.-Tipo de terreno",
+    //       options: ["Propio", "Rentado", "Ejido"],
+    //       uuid: "land_type",
+    //     },
+    //     {
+    //       id: "q6",
+    //       label: "5.-Superficie disponible (ha)",
+    //       options: ["0.1", "1", "2-5", "5+"],
+    //       uuid: "available_surface_ha",
+    //     },
+    //     {
+    //       id: "q7",
+    //       label: "6.-Disponibilidad de agua",
+    //       options: ["Pozo", "Canal", "Pipa", "Solo lluvia"],
+    //       uuid: "water_availability",
+    //     },
+    //     {
+    //       id: "q8",
+    //       label: "7.- ¿Zona con heladas?",
+    //       options: ["Sí", "No", "No sé"],
+    //       uuid: "frost_zone",
+    //     },
+    //     {
+    //       id: "q9",
+    //       label: "8.- ¿Tiene energía eléctrica?",
+    //       options: ["Sí", "No"],
+    //       uuid: "has_electricity",
+    //     },
+    //     {
+    //       id: "q10",
+    //       label: "9.- ¿Cuenta con mano de obra?",
+    //       options: ["Sí", "A veces", "No"],
+    //       uuid: "has_labor",
+    //     },
+    //     {
+    //       id: "q11",
+    //       label: "10.- Nivel de decisión",
+    //       options: ["100% seguro", "Evaluando", "Solo viendo"],
+    //       uuid: "decision_level",
+    //     },
+    //     {
+    //       id: "q12",
+    //       label: "11.- ¿en qué cultivos tienes experiencia?",
+    //       uuid: "why_experience_cultive",
+    //     },
+    //     {
+    //       id: "q13",
+    //       label: "12.- Tiempo estimado para iniciar",
+    //       options: ["Inmediato", "Próximo ciclo", "Sin fecha"],
+    //       uuid: "estimated_start_time",
+    //     },
+    //   ],
 
-        asesoryTec: [
-          {
-            id: "q2",
-            label: "1.- ¡Hola! Platícanos un poco de ti ¿Cuál es tu nombre?",
-            options: [],
-            uuid: "name_complete",
-          },
-          {
-            id: "q3",
-            label: "2.- Teléfono / WhatsApp",
-            uuid: "phone_contact",
-          },
-          {
-            id: "q4",
-            label: "3.- Municipio / Estado",
-            uuid: "municipality_state",
-          },
-          {
-            id: "q5",
-            label: "4.- Años cultivo",
-            options: ["<1", "1-3", "3-7", "7"],
-            uuid: "years_of_cultivation",
-          },
-          {
-            id: "q6",
-            label: "5.- Superficie(ha)",
-            uuid: "surface_ha",
-          },
-          {
-            id: "q7",
-            label: "6.- Plantas",
-            uuid: "plants",
-          },
-          {
-            id: "q8",
-            label: "7.- Variedades",
-            uuid: "varieties",
-          },
-          {
-            id: "q9",
-            label: "8.- Propósito",
-            options: ["Local", "Central", "Exportación", "Familiar"],
-            uuid: "purpose",
-          },
-          {
-            id: "q10",
-            label: "9.- Tutor",
-            options: ["Vivo", "Madera", "Concreto", "Acero", "Mixto"],
-            uuid: "tutor_type",
-          },
-          {
-            id: "q11",
-            label: "10.- Riego",
-            options: ["Goteo", "Microaspersión", "Pipa", "Temporal"],
-            uuid: "irrigation_type",
-          },
-          {
-            id: "q12",
-            label: "11.- Fertilización",
-            options: ["Orgánica", "Mixta", "No aplica"],
-            uuid: "fertilization",
-          },
-          {
-            id: "q13",
-            label: "12.- Problemas",
-            uuid: "problems",
-          },
-          {
-            id: "q14",
-            label: "13.- Estado cultivo",
-            options: [
-              "Plantas fuertes",
-              "Plantas lentas",
-              "Plantas amarillas",
-              "Enfermedades visibles",
-            ],
-            uuid: "crop_status",
-          },
-          {
-            id: "q15",
-            label: "14.- Producción",
-            options: ["Inicio", "Media", "Estable", "Baja", "Detenida"],
-            uuid: "production_status",
-          },
-          {
-            id: "q16",
-            label: "15.- Objetivo",
-            options: ["Producción", "Calidad", "Sanidad", "Podas", "Nutrición"],
-            uuid: "objective",
-          },
-          {
-            id: "q17",
-            label: "16.- Tipo asesoría",
-            options: [
-              "Diagnóstico",
-              "Mensual",
-              "Capacitación",
-              "Visitas puntuales",
-            ],
-            uuid: "advisory_type",
-          },
-          {
-            id: "q18",
-            label: "17.- Involucramiento",
-            options: [
-              "Yo mismo",
-              "Superviso personal",
-              "Personal sin supervisión",
-              "Proyecto inactivo",
-            ],
-            uuid: "involvement",
-          },
-          {
-            id: "q19",
-            label: "18.- Compromiso",
-            options: [
-              "100%",
-              "Intermedio",
-              "Depende del costo",
-              "Orientación básica",
-            ],
-            uuid: "commitment",
-          },
-          {
-            id: "q20",
-            label: "19.- Visita",
-            options: ["Sí", "No"],
-            uuid: "visit",
-          },
-        ],
+    //   frut: [
+    //     {
+    //       id: "q2",
+    //       label: "1.- ¡Hola! Platícanos un poco de ti ¿Cuál es tu nombre?",
+    //       options: [],
+    //       uuid: "name_complete",
+    //     },
+    //     {
+    //       id: "q3",
+    //       label: "2.-Teléfono / WhatsApp",
+    //       uuid: "phone_contact",
+    //     },
+    //     {
+    //       id: "q4",
+    //       label: "3.- Ciudad / Estado",
+    //       uuid: "city_state",
+    //     },
+    //     {
+    //       id: "q5",
+    //       label: "4.- Tipo de fruta",
+    //       options: ["Blanca", "Color", "Ambas"],
+    //       uuid: "fruit_type",
+    //     },
+    //     {
+    //       id: "q6",
+    //       label: "5.- Volumen",
+    //       options: ["5-50", "50-300", "300-1000", "1000"],
+    //       uuid: "volume",
+    //     },
+    //     {
+    //       id: "q7",
+    //       label: "6.- Frecuencia",
+    //       options: ["Única", "Semanal", "Quincenal", "Mensual", "Temporada"],
+    //       uuid: "frequency",
+    //     },
+    //     {
+    //       id: "q8",
+    //       label: "7.- Presentación",
+    //       options: ["Granel", "Caja 5kg", "Caja 6.8kg", "Otro"],
+    //       uuid: "presentation",
+    //     },
+    //     {
+    //       id: "q9",
+    //       label: "8.- Calidad",
+    //       options: ["Seleccionada", "Comercial", "Segunda"],
+    //       uuid: "quality",
+    //     },
+    //     {
+    //       id: "q10",
+    //       label: "9.-Lugar de entrega",
+    //       options: ["Negocio", "CEDIS", "Central", "Punto de carga"],
+    //       uuid: "delivery_place",
+    //     },
+    //     {
+    //       id: "q11",
+    //       label: "10.- Flete",
+    //       options: ["Cliente", "Proveedor", "Depende"],
+    //       uuid: "freight",
+    //     },
+    //     {
+    //       id: "q12",
+    //       label: "11.- Transporte",
+    //       options: ["Sí", "No"],
+    //       uuid: "transport",
+    //     },
+    //     {
+    //       id: "q13",
+    //       label: "12.- Pago",
+    //       options: ["Contado", "Contra entrega", "Crédito"],
+    //       uuid: "payment",
+    //     },
+    //     {
+    //       id: "q14",
+    //       label: "13.- Crédito",
+    //       options: ["7", "15", "30", ">30"],
+    //       uuid: "credit_days",
+    //     },
+    //     {
+    //       id: "q15",
+    //       label: "14.- Inicio",
+    //       options: [
+    //         "Inmediato",
+    //         "Próxima semana",
+    //         "Próximo mes",
+    //         "Solo viendo",
+    //       ],
+    //       uuid: "start_time",
+    //     },
+    //   ],
 
-        process: [
-          {
-            id: "q2",
-            label: "1.- ¡Hola! Platícanos un poco de ti ¿Cuál es tu nombre?",
-            options: [],
-            uuid: "name_complete",
-          },
-          {
-            id: "q3",
-            label: "2.- Teléfono / WhatsApp",
-            uuid: "phone_contact",
-          },
-          {
-            id: "q4",
-            label: "3.- Ciudad / Estado",
-            uuid: "city_state",
-          },
-          {
-            id: "q5",
-            label: "4.- Rol",
-            options: ["Propietario", "Compras", "Producción", "Otro"],
-            uuid: "role",
-          },
-          {
-            id: "q6",
-            label: "5.- Uso",
-            options: [
-              "Congelado",
-              "Deshidratado",
-              "Pulpa",
-              "Jugo",
-              "Cosmética",
-              "Investigación",
-            ],
-            uuid: "use",
-          },
-          {
-            id: "q7",
-            label: "8.- Planta",
-            options: ["Sí propia", "Sí maquila", "No"],
-            uuid: "has_plant",
-          },
-          {
-            id: "q8",
-            label: "9.- Proceso",
-            options: [
-              "IQF",
-              "Pulpa congelada",
-              "Liofilizado",
-              "Deshidratado",
-              "Otro",
-            ],
-            uuid: "process_type",
-          },
-          {
-            id: "q9",
-            label: "10.- Volumen",
-            options: ["50-200", "200-600", "600-1500", "1500"],
-            uuid: "volume",
-          },
-          {
-            id: "q10",
-            label: "11.- Frecuencia",
-            options: ["Única", "Semanal", "Quincenal", "Mensual", "Temporada"],
-            uuid: "frequency",
-          },
-          {
-            id: "q11",
-            label: "12.- Estado fruta",
-            options: [
-              "Pulpa",
-              "Entera congelada",
-              "Trozos",
-              "Deshidratada lámina",
-              "Deshidratada cubo",
-              "No definido",
-            ],
-            uuid: "fruit_state",
-          },
-          {
-            id: "q12",
-            label: "13.- Variedad",
-            options: ["Blanca", "Roja/Rosa/Fucsia", "Ambas", "Indiferente"],
-            uuid: "variety",
-          },
-          {
-            id: "q13",
-            label: "14.- Grado industria",
-            options: ["Seleccionada", "Grado industria", "Depende del precio"],
-            uuid: "industry_grade",
-          },
-          {
-            id: "q14",
-            label: "15.- Lugar entrega",
-            options: [
-              "Planta propia",
-              "CEDIS",
-              "Central",
-              "Transportista",
-              "Por definir",
-            ],
-            uuid: "delivery_place",
-          },
-          {
-            id: "q15",
-            label: "16.- Flete",
-            options: ["Cliente", "Proveedor", "Depende"],
-            uuid: "freight",
-          },
-          {
-            id: "q16",
-            label: "17.- Pago",
-            options: ["Contado", "Contra entrega", "Crédito"],
-            uuid: "payment",
-          },
-          {
-            id: "q17",
-            label: "18.- Crédito",
-            options: ["7", "15", "30", ">30"],
-            uuid: "credit_days",
-          },
-          {
-            id: "q18",
-            label: "19.- Inicio",
-            options: [
-              "Inmediato",
-              "Próxima semana",
-              "Próximo mes",
-              "Solo evaluando",
-            ],
-            uuid: "start_time",
-          },
-        ],
+    //   asesoryTec: [
+    //     {
+    //       id: "q2",
+    //       label: "1.- ¡Hola! Platícanos un poco de ti ¿Cuál es tu nombre?",
+    //       options: [],
+    //       uuid: "name_complete",
+    //     },
+    //     {
+    //       id: "q3",
+    //       label: "2.- Teléfono / WhatsApp",
+    //       uuid: "phone_contact",
+    //     },
+    //     {
+    //       id: "q4",
+    //       label: "3.- Municipio / Estado",
+    //       uuid: "municipality_state",
+    //     },
+    //     {
+    //       id: "q5",
+    //       label: "4.- Años cultivo",
+    //       options: ["<1", "1-3", "3-7", "7"],
+    //       uuid: "years_of_cultivation",
+    //     },
+    //     {
+    //       id: "q6",
+    //       label: "5.- Superficie(ha)",
+    //       uuid: "surface_ha",
+    //     },
+    //     {
+    //       id: "q7",
+    //       label: "6.- Plantas",
+    //       uuid: "plants",
+    //     },
+    //     {
+    //       id: "q8",
+    //       label: "7.- Variedades",
+    //       uuid: "varieties",
+    //     },
+    //     {
+    //       id: "q9",
+    //       label: "8.- Propósito",
+    //       options: ["Local", "Central", "Exportación", "Familiar"],
+    //       uuid: "purpose",
+    //     },
+    //     {
+    //       id: "q10",
+    //       label: "9.- Tutor",
+    //       options: ["Vivo", "Madera", "Concreto", "Acero", "Mixto"],
+    //       uuid: "tutor_type",
+    //     },
+    //     {
+    //       id: "q11",
+    //       label: "10.- Riego",
+    //       options: ["Goteo", "Microaspersión", "Pipa", "Temporal"],
+    //       uuid: "irrigation_type",
+    //     },
+    //     {
+    //       id: "q12",
+    //       label: "11.- Fertilización",
+    //       options: ["Orgánica", "Mixta", "No aplica"],
+    //       uuid: "fertilization",
+    //     },
+    //     {
+    //       id: "q13",
+    //       label: "12.- Problemas",
+    //       uuid: "problems",
+    //     },
+    //     {
+    //       id: "q14",
+    //       label: "13.- Estado cultivo",
+    //       options: [
+    //         "Plantas fuertes",
+    //         "Plantas lentas",
+    //         "Plantas amarillas",
+    //         "Enfermedades visibles",
+    //       ],
+    //       uuid: "crop_status",
+    //     },
+    //     {
+    //       id: "q15",
+    //       label: "14.- Producción",
+    //       options: ["Inicio", "Media", "Estable", "Baja", "Detenida"],
+    //       uuid: "production_status",
+    //     },
+    //     {
+    //       id: "q16",
+    //       label: "15.- Objetivo",
+    //       options: ["Producción", "Calidad", "Sanidad", "Podas", "Nutrición"],
+    //       uuid: "objective",
+    //     },
+    //     {
+    //       id: "q17",
+    //       label: "16.- Tipo asesoría",
+    //       options: [
+    //         "Diagnóstico",
+    //         "Mensual",
+    //         "Capacitación",
+    //         "Visitas puntuales",
+    //       ],
+    //       uuid: "advisory_type",
+    //     },
+    //     {
+    //       id: "q18",
+    //       label: "17.- Involucramiento",
+    //       options: [
+    //         "Yo mismo",
+    //         "Superviso personal",
+    //         "Personal sin supervisión",
+    //         "Proyecto inactivo",
+    //       ],
+    //       uuid: "involvement",
+    //     },
+    //     {
+    //       id: "q19",
+    //       label: "18.- Compromiso",
+    //       options: [
+    //         "100%",
+    //         "Intermedio",
+    //         "Depende del costo",
+    //         "Orientación básica",
+    //       ],
+    //       uuid: "commitment",
+    //     },
+    //     {
+    //       id: "q20",
+    //       label: "19.- Visita",
+    //       options: ["Sí", "No"],
+    //       uuid: "visit",
+    //     },
+    //   ],
 
-        providers: [
-          {
-            id: "q2",
-            label: "1.- ¡Hola! Platícanos un poco de ti ¿Cuál es tu nombre?",
-            options: [],
-            uuid: "name_complete",
-          },
-          {
-            id: "q3",
-            label: "2.- Teléfono / WhatsApp",
-            uuid: "phone_contact",
-          },
-          {
-            id: "q4",
-            label: "3.- Municipio / Estado",
-            uuid: "municipality_state",
-          },
-          {
-            id: "q5",
-            label: "4.- Perfil",
-            options: [
-              "Proveedor/Empresa",
-              "Transportista/Logística",
-              "Servicio Técnico/Consultor",
-              "Perfil académico (Estudiante/Investigación/Universidad)",
-              "ONG/Proyecto Social",
-              "Otro",
-            ],
-            uuid: "profile",
-          },
-          {
-            id: "q6",
-            label: "5.- Interés",
-            options: [
-              "Ser proveedor de PITAMEX",
-              "Ofrecer productos a productores",
-              "Alianza/Colaboración",
-              "Práctica/Residencia",
-              "Investigación/Proyecto",
-              "Información",
-            ],
-            uuid: "interest",
-          },
-          {
-            id: "q7",
-            label: "6.- Contacto",
-            options: ["WhatsApp", "Llamada", "Correo"],
-            uuid: "contact_method",
-          },
-        ],
+    //   process: [
+    //     {
+    //       id: "q2",
+    //       label: "1.- ¡Hola! Platícanos un poco de ti ¿Cuál es tu nombre?",
+    //       options: [],
+    //       uuid: "name_complete",
+    //     },
+    //     {
+    //       id: "q3",
+    //       label: "2.- Teléfono / WhatsApp",
+    //       uuid: "phone_contact",
+    //     },
+    //     {
+    //       id: "q4",
+    //       label: "3.- Ciudad / Estado",
+    //       uuid: "city_state",
+    //     },
+    //     {
+    //       id: "q5",
+    //       label: "4.- Rol",
+    //       options: ["Propietario", "Compras", "Producción", "Otro"],
+    //       uuid: "role",
+    //     },
+    //     {
+    //       id: "q6",
+    //       label: "5.- Uso",
+    //       options: [
+    //         "Congelado",
+    //         "Deshidratado",
+    //         "Pulpa",
+    //         "Jugo",
+    //         "Cosmética",
+    //         "Investigación",
+    //       ],
+    //       uuid: "use",
+    //     },
+    //     {
+    //       id: "q7",
+    //       label: "8.- Planta",
+    //       options: ["Sí propia", "Sí maquila", "No"],
+    //       uuid: "has_plant",
+    //     },
+    //     {
+    //       id: "q8",
+    //       label: "9.- Proceso",
+    //       options: [
+    //         "IQF",
+    //         "Pulpa congelada",
+    //         "Liofilizado",
+    //         "Deshidratado",
+    //         "Otro",
+    //       ],
+    //       uuid: "process_type",
+    //     },
+    //     {
+    //       id: "q9",
+    //       label: "10.- Volumen",
+    //       options: ["50-200", "200-600", "600-1500", "1500"],
+    //       uuid: "volume",
+    //     },
+    //     {
+    //       id: "q10",
+    //       label: "11.- Frecuencia",
+    //       options: ["Única", "Semanal", "Quincenal", "Mensual", "Temporada"],
+    //       uuid: "frequency",
+    //     },
+    //     {
+    //       id: "q11",
+    //       label: "12.- Estado fruta",
+    //       options: [
+    //         "Pulpa",
+    //         "Entera congelada",
+    //         "Trozos",
+    //         "Deshidratada lámina",
+    //         "Deshidratada cubo",
+    //         "No definido",
+    //       ],
+    //       uuid: "fruit_state",
+    //     },
+    //     {
+    //       id: "q12",
+    //       label: "13.- Variedad",
+    //       options: ["Blanca", "Roja/Rosa/Fucsia", "Ambas", "Indiferente"],
+    //       uuid: "variety",
+    //     },
+    //     {
+    //       id: "q13",
+    //       label: "14.- Grado industria",
+    //       options: ["Seleccionada", "Grado industria", "Depende del precio"],
+    //       uuid: "industry_grade",
+    //     },
+    //     {
+    //       id: "q14",
+    //       label: "15.- Lugar entrega",
+    //       options: [
+    //         "Planta propia",
+    //         "CEDIS",
+    //         "Central",
+    //         "Transportista",
+    //         "Por definir",
+    //       ],
+    //       uuid: "delivery_place",
+    //     },
+    //     {
+    //       id: "q15",
+    //       label: "16.- Flete",
+    //       options: ["Cliente", "Proveedor", "Depende"],
+    //       uuid: "freight",
+    //     },
+    //     {
+    //       id: "q16",
+    //       label: "17.- Pago",
+    //       options: ["Contado", "Contra entrega", "Crédito"],
+    //       uuid: "payment",
+    //     },
+    //     {
+    //       id: "q17",
+    //       label: "18.- Crédito",
+    //       options: ["7", "15", "30", ">30"],
+    //       uuid: "credit_days",
+    //     },
+    //     {
+    //       id: "q18",
+    //       label: "19.- Inicio",
+    //       options: [
+    //         "Inmediato",
+    //         "Próxima semana",
+    //         "Próximo mes",
+    //         "Solo evaluando",
+    //       ],
+    //       uuid: "start_time",
+    //     },
+    //   ],
 
-        info: [
-          {
-            id: "q2",
-            label: "1.- ¡Hola! Platícanos un poco de ti ¿Cuál es tu nombre?",
-            options: [],
-            uuid: "name_complete",
-          },
-          {
-            id: "q3",
-            label: "2.- Teléfono / WhatsApp",
-            uuid: "phone_contact",
-          },
-          {
-            id: "q4",
-            label: "3.- Municipio / Estado",
-            uuid: "municipality_state",
-          },
-          {
-            id: "q5",
-            label: "4.- Notas",
-            uuid: "notes",
-          },
-        ],
-      };
+    //   providers: [
+    //     {
+    //       id: "q2",
+    //       label: "1.- ¡Hola! Platícanos un poco de ti ¿Cuál es tu nombre?",
+    //       options: [],
+    //       uuid: "name_complete",
+    //     },
+    //     {
+    //       id: "q3",
+    //       label: "2.- Teléfono / WhatsApp",
+    //       uuid: "phone_contact",
+    //     },
+    //     {
+    //       id: "q4",
+    //       label: "3.- Municipio / Estado",
+    //       uuid: "municipality_state",
+    //     },
+    //     {
+    //       id: "q5",
+    //       label: "4.- Perfil",
+    //       options: [
+    //         "Proveedor/Empresa",
+    //         "Transportista/Logística",
+    //         "Servicio Técnico/Consultor",
+    //         "Perfil académico (Estudiante/Investigación/Universidad)",
+    //         "ONG/Proyecto Social",
+    //         "Otro",
+    //       ],
+    //       uuid: "profile",
+    //     },
+    //     {
+    //       id: "q6",
+    //       label: "5.- Interés",
+    //       options: [
+    //         "Ser proveedor de PITAMEX",
+    //         "Ofrecer productos a productores",
+    //         "Alianza/Colaboración",
+    //         "Práctica/Residencia",
+    //         "Investigación/Proyecto",
+    //         "Información",
+    //       ],
+    //       uuid: "interest",
+    //     },
+    //     {
+    //       id: "q7",
+    //       label: "6.- Contacto",
+    //       options: ["WhatsApp", "Llamada", "Correo"],
+    //       uuid: "contact_method",
+    //     },
+    //   ],
 
-      // Primera pregunta base
-      const FIRST_QUESTION = {
-        id: "q1",
-        label: "Selección de Interés",
-        // options: ["productor", "comercializador", "consumidor"],
-        options: [
-          { uuid: "plantOrEsqueaje", label: "Planta / Esqueje" },
-          { uuid: "frut", label: "Fruta (Nacional / Exportación)" },
-          { uuid: "asesoryTec", label: "Asesoría Técnica" },
-          { uuid: "process", label: "Procesado (Congelado / Deshidratado)" },
-          { uuid: "providers", label: "Proveedores / Alianzas / Estancias" },
-          { uuid: "info", label: "Solo Información" },
-        ],
-      };
+    //   info: [
+    //     {
+    //       id: "q2",
+    //       label: "1.- ¡Hola! Platícanos un poco de ti ¿Cuál es tu nombre?",
+    //       options: [],
+    //       uuid: "name_complete",
+    //     },
+    //     {
+    //       id: "q3",
+    //       label: "2.- Teléfono / WhatsApp",
+    //       uuid: "phone_contact",
+    //     },
+    //     {
+    //       id: "q4",
+    //       label: "3.- Municipio / Estado",
+    //       uuid: "municipality_state",
+    //     },
+    //     {
+    //       id: "q5",
+    //       label: "4.- Notas",
+    //       uuid: "notes",
+    //     },
+    //   ],
+    // };
 
-      // Arreglo que irá cambiando dinámicamente
-      let QUESTIONS = [FIRST_QUESTION];
-    </script>
-    <script src="db.js"></script>
-    <script src="./formController.js"></script>
-    <script src="export.js"></script>
-    <script src="app.js"></script>
-  </body>
+    // Primera pregunta base
+    // const FIRST_QUESTION = {
+    //   id: "q1",
+    //   label: "Selección de Interés",
+    //   // options: ["productor", "comercializador", "consumidor"],
+    //   options: [
+    //     { uuid: "plantOrEsqueaje", label: "Planta / Esqueje" },
+    //     { uuid: "frut", label: "Fruta (Nacional / Exportación)" },
+    //     { uuid: "asesoryTec", label: "Asesoría Técnica" },
+    //     { uuid: "process", label: "Procesado (Congelado / Deshidratado)" },
+    //     { uuid: "providers", label: "Proveedores / Alianzas / Estancias" },
+    //     { uuid: "info", label: "Solo Información" },
+    //   ],
+    // };
+
+
+    // Primera pregunta base
+    const FIRST_QUESTION = {
+      id: "q1",
+      label: "¿Qué le interesa?",
+      // options: ["productor", "comercializador", "consumidor"],
+      options: [
+        { uuid: "plantOrEsqueaje", label: "Planta" },
+        { uuid: "productive_alliances", label: "Alianzas productivas" },
+        { uuid: "commercial_channels", label: "Canales comerciales" },
+        { uuid: "technical_advice", label: "Asesoría técnica" },
+        { uuid: "processing_frozen", label: "Proceso/Congelado/Deshidratado" },
+        { uuid: "collaborations", label: "Colaboraciones" },
+        { uuid: "info", label: "Solo Información" },
+      ],
+    };
+
+
+    // Preguntas agrupadas por flujos
+    const QUESTION_GROUPS = {
+      plantOrEsqueaje: [
+        {
+          id: "q2",
+          label: "Nombre completo",
+          options: [],
+          uuid: "name_complete",
+        },
+        {
+          id: "q3",
+          label: "Cargo/Puesto",
+          options: ["Dueño", "Producción", "Técnico", "Administración", "Otro"],
+          uuid: "cargo_puesto",
+        },
+        {
+          id: "q4",
+          label: "Superficie disponible",
+          options: ["<1 ha", "1-3 ha", "3-5 ha", "5-10 ha", "10+ ha"],
+          uuid: "superficie_disponible",
+        },
+        {
+          id: "q5",
+          label: "Tipo de clima",
+          options: [
+            "Templado seco",
+            "Templado subhúmedo",
+            "Semiárido",
+            "Tropical húmedo",
+          ],
+          uuid: "tipo_clima",
+        },
+        {
+          id: "q6",
+          label: "Temperatura mínima aproximada",
+          options: ["0°C o menos", "1-5°C", "5-10°C", "10°C+"],
+          uuid: "temperatura_minima_aproximada",
+        },
+        {
+          id: "q7",
+          label: "¿Se presentan heladas?",
+          options: ["Nunca", "Ocasionalmente", "Frecuentemente"],
+          uuid: "se_presentan_heladas",
+        },
+        {
+          id: "q8",
+          label: "Disponibilidad de agua",
+          options: ["Abundante", "Moderada", "Limitada"],
+          uuid: "disponibilidad_de_agua",
+        },
+        {
+          id: "q9",
+          label: "¿Cuenta con sistema de riego?",
+          options: ["Sí", "No"],
+          uuid: "cuenta_con_sistema_de_riego",
+        },
+        {
+          id: "q10",
+          label: "Rango de inversión disponible",
+          options: ["<200k", "200k-700k", "700k-2M", "2M+"],
+          uuid: "rango_de_inversion_disponible",
+        },
+        {
+          id: "q11",
+          label: "¿Le interesaría comercializar con PITAMEX?",
+          options: ["Sí", "No"],
+          uuid: "le_interesaria_comercializar_con_pitamex",
+        },
+      ],
+      productive_alliances: [
+        {
+          id: "q2",
+          label: "Nombre completo",
+          options: [],
+          uuid: "name_complete",
+        },
+        {
+          id: "q3",
+          label: "Cargo/Puesto",
+          options: [
+            "Dueño",
+            "CEO",
+            "Producción",
+            "Calidad",
+            "Ventas",
+            "Logística",
+            "Otro",
+          ],
+          uuid: "cargo_puesto",
+        },
+        {
+          id: "q4",
+          label: "Producción anual",
+          options: ["<5 ton", "5-20 ton", "20-50 ton", "50-100 ton", "100+ ton"],
+          uuid: "produccion_anual",
+        },
+        {
+          id: "q5",
+          label: "Semanas de producción",
+          options: ["<4", "4-8", "8-12", "12-18", "18+"],
+          uuid: "semanas_de_produccion",
+        },
+        {
+          id: "q6",
+          label: "Variedades principales",
+          options: ["Blanca", "Rosa", "Roja", "Fucsia", "Chekos", "F5", "Otras"],
+          uuid: "variedades_principales",
+        },
+        {
+          id: "q7",
+          label: "Tipo de clima",
+          options: [
+            "Templado seco",
+            "Templado subhúmedo",
+            "Semiárido",
+            "Tropical húmedo",
+          ],
+          uuid: "tipo_de_clima",
+        },
+        {
+          id: "q8",
+          label: "Grados Brix",
+          options: ["<12", "12-15", "15-18", "18+"],
+          uuid: "grados_brix",
+        },
+        {
+          id: "q9",
+          label: "¿Cuenta con certificaciones?",
+          options: ["Primus", "GlobalG.A.P.", "Orgánico", "Otra"],
+          uuid: "cuenta_con_certificaciones",
+        },
+        {
+          id: "q10",
+          label: "¿Le interesa producción limpia/libre de pesticidas?",
+          options: ["Sí", "No"],
+          uuid: "le_interesa_produccion_limpia_libre_de_pesticidas",
+        },
+        {
+          id: "q11",
+          label: "¿Cuenta con cadena de frío?",
+          options: ["Sí", "No"],
+          uuid: "cuenta_con_cadena_de_frio",
+        },
+        {
+          id: "q12",
+          label: "¿Busca relación de largo plazo?",
+          options: ["Sí", "No"],
+          uuid: "busca_relacion_de_largo_plazo",
+        },
+      ],
+
+      commercial_channels: [
+        {
+          id: "q2",
+          label: "Nombre completo",
+          options: [],
+          uuid: "name_complete",
+        },
+        {
+          id: "q3",
+          label: "Empresa",
+          options: [],
+          uuid: "empresa",
+        },
+        {
+          id: "q4",
+          label: "Cargo/Puesto",
+          options: [
+            "Dueño",
+            "CEO",
+            "Director general",
+            "Compras",
+            "Gerente de compras",
+            "Ventas",
+            "Calidad",
+            "Operaciones",
+            "Otro",
+          ],
+          uuid: "cargo_puesto",
+        },
+        {
+          id: "q5",
+          label: "Área principal",
+          options: [
+            "Compras",
+            "Ventas",
+            "Calidad",
+            "Operaciones",
+            "Administración",
+            "Dirección",
+            "Logística",
+          ],
+          uuid: "area_principal",
+        },
+        {
+          id: "q6",
+          label: "Canal principal",
+          options: [
+            "Exportación",
+            "Supermercado",
+            "Central de Abastos",
+            "Frutería premium",
+            "Industria",
+            "Semiindustria",
+            "Farmacéutica",
+          ],
+          uuid: "canal_principal",
+        },
+        {
+          id: "q7",
+          label: "Volumen requerido",
+          options: ["<1 ton", "1-5 ton", "5-20 ton", "20-50 ton", "50+ ton"],
+          uuid: "volumen_requerido",
+        },
+        {
+          id: "q8",
+          label: "Variedades de interés",
+          options: [
+            "Blanca",
+            "Rosa",
+            "Roja",
+            "Fucsia",
+            "Chekos",
+            "F5",
+            "Otras",
+          ],
+          uuid: "variedades_de_interes",
+        },
+        {
+          id: "q9",
+          label: "Presentación deseada",
+          options: [
+            "Caja",
+            "Bolsa",
+            "Granel",
+            "Pulpa",
+            "Congelado",
+            "Deshidratado",
+            "Otro",
+          ],
+          uuid: "presentacion_deseada",
+        },
+        {
+          id: "q10",
+          label: "¿Qué certificaciones requiere?",
+          options: [
+            "Primus",
+            "GlobalG.A.P.",
+            "FDA",
+            "HACCP",
+            "SQF",
+            "Orgánico",
+          ],
+          uuid: "que_certificaciones_requiere",
+        },
+        {
+          id: "q11",
+          label: "¿Qué documentos solicita?",
+          options: [
+            "Factura",
+            "Certificado fitosanitario",
+            "Carta porte",
+            "Packing list",
+            "COA",
+            "Trazabilidad",
+            "Otro",
+          ],
+          uuid: "que_documentos_solicita",
+        },
+        {
+          id: "q12",
+          label: "Método de pago",
+          options: ["Transferencia", "Contado", "Crédito", "Mixto"],
+          uuid: "metodo_de_pago",
+        },
+        {
+          id: "q13",
+          label: "Tiempo de pago",
+          options: ["Contado", "7 días", "15 días", "30 días", "45+ días"],
+          uuid: "tiempo_de_pago",
+        },
+        {
+          id: "q14",
+          label: "¿Busca proveedor permanente?",
+          options: ["Sí", "No"],
+          uuid: "busca_proveedor_permanente",
+        },
+      ],
+      technical_advice: [
+        {
+          id: "q2",
+          label: "Nombre completo",
+          options: [],
+          uuid: "name_complete",
+        },
+        {
+          id: "q3",
+          label: "Cargo/Puesto",
+          options: ["Dueño", "Producción", "Técnico", "Administración", "Otro"],
+          uuid: "cargo_puesto",
+        },
+        {
+          id: "q4",
+          label: "¿Qué necesita?",
+          options: [
+            "Nutrición",
+            "Plagas",
+            "Diseño de huerta",
+            "Riego",
+            "Certificación",
+            "Comercialización",
+          ],
+          uuid: "que_necesita",
+        },
+        {
+          id: "q5",
+          label: "¿Cuenta con huerta establecida?",
+          options: ["Sí", "No"],
+          uuid: "cuenta_con_huerta_establecida",
+        },
+        {
+          id: "q6",
+          label: "Superficie",
+          options: ["<1 ha", "1-3 ha", "3-5 ha", "5-10 ha", "10+ ha"],
+          uuid: "superficie",
+        },
+      ],
+      processing_frozen: [
+        {
+          id: "q2",
+          label: "Nombre completo",
+          options: [],
+          uuid: "name_complete",
+        },
+        {
+          id: "q3",
+          label: "Cargo/Puesto",
+          options: ["Dueño", "Producción", "Compras", "Calidad", "Otro"],
+          uuid: "cargo_puesto",
+        },
+        {
+          id: "q4",
+          label: "¿Qué le interesa?",
+          options: [
+            "Pulpa",
+            "Congelado",
+            "Deshidratado",
+            "Snack",
+            "Farmacéutico",
+          ],
+          uuid: "que_le_interesa",
+        },
+        {
+          id: "q5",
+          label: "Volumen requerido",
+          options: ["<1 ton", "1-5 ton", "5-20 ton", "20+ ton"],
+          uuid: "volumen_requerido",
+        },
+        {
+          id: "q6",
+          label: "¿Requiere certificaciones?",
+          options: ["FDA", "HACCP", "SQF", "Orgánico"],
+          uuid: "requiere_certificaciones",
+        },
+      ],
+      collaborations: [
+        {
+          id: "q2",
+          label: "Nombre completo",
+          options: [],
+          uuid: "name_complete",
+        },
+        {
+          id: "q3",
+          label: "Cargo/Puesto",
+          options: ["CEO", "Director", "Marketing", "Producción", "Otro"],
+          uuid: "cargo_puesto",
+        },
+        {
+          id: "q4",
+          label: "Tipo de colaboración",
+          options: [
+            "Marketing",
+            "Comercial",
+            "Técnica",
+            "Financiera",
+            "Investigación",
+            "Marca",
+          ],
+          uuid: "tipo_de_colaboracion",
+        },
+        {
+          id: "q5",
+          label: "¿Qué busca aportar?",
+          options: [],
+          uuid: "que_busca_aportar",
+        },
+      ],
+      info: [
+        {
+          id: "q2",
+          label: "Nombre completo",
+          options: [],
+          uuid: "name_complete",
+        },
+        {
+          id: "q3",
+          label: "Cargo/Puesto",
+          options: ["Dueño", "Producción", "Compras", "Otro"],
+          uuid: "cargo_puesto",
+        },
+        {
+          id: "q4",
+          label: "¿Qué información le interesa?",
+          options: [
+            "Planta",
+            "Fruta",
+            "Exportación",
+            "Certificación",
+            "Asesoría",
+            "Proceso",
+          ],
+          uuid: "que_informacion_le_interesa",
+        },
+      ],
+    };
+    // Arreglo que irá cambiando dinámicamente
+    let QUESTIONS = [FIRST_QUESTION];
+  </script>
+  <script src="db.js"></script>
+  <script src="./formController.js"></script>
+  <script src="export.js"></script>
+  <script src="app.js"></script>
+</body>
+
 </html>
