@@ -248,51 +248,49 @@ function resetForm() {
   render();
 }
 
-window.addEventListener("load", () => {
-  // ✅ Inicializar recordsData si no existe
-  window.addEventListener("load", async () => {
-    await initRecords();
-    render();
-
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker
-        .register("service-worker.js")
-        .catch(console.error);
-    }
-  });
-
+window.addEventListener("load", async () => {
+  await initRecords();
   render();
 
   if ("serviceWorker" in navigator) {
-    navigator.serviceWorker
-      .register("service-worker.js")
-      .catch((e) => console.log(e));
+    try {
+      await navigator.serviceWorker.register("service-worker.js");
+      console.log("✅ SW registrado");
+    } catch (e) {
+      console.error(e);
+    }
   }
+
+
+  manualSyncSetup();
 });
 
 // 🔁 Sincronización manual para navegadores sin SyncManager
-function manualSyncSetup() {
-  // Evita múltiples registros
+async function manualSyncSetup() {
   if (window._manualSyncInitialized) return;
   window._manualSyncInitialized = true;
 
   console.log("⚙️ Configurando sincronización manual...");
 
-  // Cuando el usuario vuelva a tener conexión
+  // Cuando vuelve internet
   window.addEventListener("online", async () => {
-    console.log("🌐 Conexión restaurada, enviando datos pendientes...");
-    await sendPendingData();
-  });
+    console.log("📡 Internet restaurado");
 
-  // Intentar sincronizar también al abrir la app
-  document.addEventListener("DOMContentLoaded", async () => {
-    if (navigator.onLine) {
-      console.log("🚀 App abierta con conexión, enviando pendientes...");
+    try {
       await sendPendingData();
+      console.log("✅ Datos pendientes enviados");
+    } catch (e) {
+      console.error("❌ Error enviando pendientes", e);
     }
   });
 
-  // Reintentar cada 2 minutos si hay conexión
+  // Intentar sincronizar al abrir la app
+  if (navigator.onLine) {
+    console.log("🚀 App abierta con conexión, enviando pendientes...");
+    await sendPendingData();
+  }
+
+  // Reintentar periódicamente
   setInterval(async () => {
     if (navigator.onLine) {
       await sendPendingData();
