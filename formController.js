@@ -1,95 +1,85 @@
-importScripts("db.js");
+// --- formController.js ---
+// Envío de registros al servidor. Se usa en la página y en el service worker.
 
-// Helpers para IndexedDB con promesas
-function getFromStore(store, key) {
-  return new Promise((resolve, reject) => {
-    const req = store.get(key);
-    req.onsuccess = () => resolve(req.result);
-    req.onerror = () => reject(req.error);
-  });
+// importScripts solo existe dentro del service worker; en la página db.js ya se cargó con <script>
+if (typeof importScripts === "function") {
+  importScripts("db.js");
 }
 
-function putInStore(store, data) {
-  return new Promise((resolve, reject) => {
-    const req = store.put(data);
-    req.onsuccess = () => resolve();
-    req.onerror = () => reject(req.error);
-  });
+const FORM_API_URL = "https://admin-pitahaya.brounieapps.com/api/create/form";
+const FORM_API_TOKEN = "goro4vmm.gd3";
+
+/**
+ * Manda un registro. Regresa true si el servidor lo aceptó.
+ */
+async function sendRecord(uuidBase, record) {
+  try {
+    const response = await fetch(FORM_API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${FORM_API_TOKEN}`,
+      },
+      body: JSON.stringify({
+        uuid: uuidBase,
+        title: typeof getGroupTitle === "function" ? getGroupTitle(uuidBase) : uuidBase,
+        data: record,
+      }),
+    });
+
+    if (response.ok) {
+      console.log("✅ Registro enviado:", record.id);
+      return true;
+    }
+
+    console.error(`❌ Error del servidor [${response.status}] al enviar:`, record.id);
+    try {
+      console.error("📩 Respuesta del servidor:", await response.text());
+    } catch (err) {
+      /* sin cuerpo */
+    }
+    return false;
+  } catch (error) {
+    // Sin conexión o error de red
+    console.warn("⚠️ Sin conexión o error de red:", error.message);
+    throw error;
+  }
 }
+
+// Evita que dos sincronizaciones al mismo tiempo manden el mismo registro dos veces
+let syncInProgress = false;
 
 async function sendPendingData() {
-  const unsyncedData = await getUnsyncedRecords();
+  if (syncInProgress) return;
+  syncInProgress = true;
 
-  if (Object.keys(unsyncedData).length === 0) {
-    console.log("✅ No hay registros pendientes por enviar.");
-    return;
-  }
+  try {
+    const unsyncedData = await getUnsyncedRecords();
 
-  const db = await openDB();
-  const tx = db.transaction(STORE_NAME, "readwrite");
-  const store = tx.objectStore(STORE_NAME);
+    if (Object.keys(unsyncedData).length === 0) {
+      console.log("✅ No hay registros pendientes por enviar.");
+      return;
+    }
 
-  for (const uuidBase in unsyncedData) {
-    const records = unsyncedData[uuidBase];
-    const token = "goro4vmm.gd3";
-
-    for (const record of records) {
-      try {
-        const response = await fetch(
-          "https://admin-pitahaya.brounieapps.com/api/create/form",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-              uuid: uuidBase,
-              data: record,
-            }),
-          }
-        );
-
-        // 🔹 Si la respuesta fue exitosa
-        if (response.ok) {
-          const groupData = await getFromStore(store, uuidBase);
-          if (!groupData || !groupData.records) continue;
-
-          const index = groupData.records.findIndex((r) => r.id === record.id);
-
-          if (index !== -1) {
-            groupData.records[index].send_api = true;
-            await putInStore(store, groupData);
-            console.log("✅ Registro sincronizado:", record.id);
-          }
+    for (const uuidBase in unsyncedData) {
+      for (const record of unsyncedData[uuidBase]) {
+        let sent;
+        try {
+          sent = await sendRecord(uuidBase, record);
+        } catch (networkError) {
+          return; // Sin internet: se reintenta más tarde
         }
-        // 🔹 Si hubo un error HTTP (4xx, 5xx)
-        else {
-          console.error(
-            `❌ Error del servidor [${response.status}] al sincronizar:`,
-            record.id
-          );
 
-          try {
-            const errorText = await response.text();
-            console.error("📩 Respuesta del servidor:", errorText);
-          } catch (err) {
-            console.error("⚠️ No se pudo leer el cuerpo de la respuesta:", err);
-          }
+        if (sent) {
+          // Transacción nueva y corta por cada registro
+          await markRecordSent(uuidBase, record.id);
         }
-      } catch (error) {
-        // 🔹 Error de red o sin conexión
-        console.warn("⚠️ Sin conexión o error de red:", error.message);
-        return; // Detenemos para intentar más tarde
       }
     }
+
+    console.log("🎉 Sincronización terminada.");
+  } finally {
+    syncInProgress = false;
   }
-
-  tx.oncomplete = () => {
-    console.log("🎉 Transacción completada correctamente.");
-  };
-
-  tx.onerror = (e) => {
-    console.error("❌ Error en la transacción IndexedDB:", e.target.error);
-  };
 }

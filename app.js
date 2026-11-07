@@ -1,7 +1,8 @@
 const root = document.getElementById("form-root");
 let current = 0;
 let answers = {};
-let selectedGroup = null; // uuid del grupo elegido
+let selectedGroup = null; // llave del grupo elegido (section_3, plantOrEsqueaje, etc.)
+let multiSelection = []; // opciones marcadas en la pregunta de selección múltiple actual
 
 function render() {
   root.innerHTML = "";
@@ -26,13 +27,15 @@ function render() {
   const content = document.createElement("div");
   content.className = "options";
 
-  // Opciones de respuesta
-  if (q.options && q.options.length) {
+  if (q.options && q.options.length && q.multiple) {
+    // Selección múltiple: se marcan varias y luego "Siguiente"
+    renderMultipleChoice(q, content);
+  } else if (q.options && q.options.length) {
+    // Selección única / Sí-No / Escala / primera pregunta
     q.options.forEach((opt) => {
       const btn = document.createElement("button");
       btn.className = "btn";
       btn.type = "button";
-      // Si la opción tiene label, úsalo (para compatibilidad)
       btn.textContent = opt.label || opt;
       btn.addEventListener("click", async () => {
         await handleAnswer(q, opt);
@@ -40,9 +43,10 @@ function render() {
       content.appendChild(btn);
     });
   } else {
-    // Campo de texto libre
+    // Campo libre (texto o número)
     const input = document.createElement("input");
-    input.type = q.label.toLowerCase().includes("correo") ? "email" : "text";
+    input.type = getInputType(q);
+    if (input.type === "number") input.inputMode = "decimal";
     input.placeholder = "Escribe tu respuesta...";
     input.value = answers[q.id] || "";
     content.appendChild(input);
@@ -51,20 +55,21 @@ function render() {
     nextBtn.className = "btn";
     nextBtn.type = "button";
     nextBtn.textContent = "Siguiente";
-    nextBtn.addEventListener("click", async () => {
+
+    const submitText = async () => {
       const val = input.value.trim();
       if (!val) return alert("Por favor completa la respuesta.");
       await handleAnswer(q, val);
+    };
+
+    nextBtn.addEventListener("click", submitText);
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") submitText();
     });
 
     content.appendChild(nextBtn);
 
-    // 👇 Agrega este bloque para enfocar automáticamente el input
-    if (q.type === "text") {
-      setTimeout(() => {
-        input.focus();
-      }, 300);
-    }
+    setTimeout(() => input.focus(), 300);
   }
 
   step.appendChild(content);
@@ -79,160 +84,148 @@ function render() {
     back.textContent = "Atrás";
     back.addEventListener("click", () => {
       if (current > 0) current--;
+      multiSelection = [];
       render();
     });
     nav.appendChild(back);
-  }
-
-  // Botón finalizar si es el último paso
-  if (selectedGroup && current === QUESTIONS.length - 1) {
-    console.log(current);
-    console.log(QUESTIONS);
-    const finish = document.createElement("button");
-    finish.className = "btn";
-    finish.type = "button";
-    finish.textContent = "Finalizar y guardar";
-
-    finish.addEventListener("click", async () => {
-      const record = {
-        id: crypto.randomUUID(),
-        fecha: new Date().toISOString(),
-        send_api: false,
-      };
-      // Guardar todas las respuestas
-      QUESTIONS.forEach((q) => {
-        const key = q.uuid || q.id;
-        record[key] = answers[q.id] || "";
-      });
-      console.log(record);
-
-      // ✅ Clasificación por la primera pregunta (FIRST_QUESTION)
-      const respuestaBase = answers[FIRST_QUESTION.id]; // por ejemplo "Planta / Esqueje"
-      const uuidBase = selectedGroup; // su uuid asociado (plantOrEsqueaje, frut, etc.)
-
-      // Insertar el registro en el grupo correspondiente
-      await saveRecord(uuidBase, record);
-      // 👇👇 Agrega esto para registrar la sincronización
-      if ("serviceWorker" in navigator && "SyncManager" in window) {
-        const registration = await navigator.serviceWorker.ready;
-        try {
-          await registration.sync.register("sync-data");
-          console.log("📡 Sincronización registrada con éxito");
-        } catch (err) {
-          console.error("❌ No se pudo registrar la sincronización", err);
-          manualSyncSetup(); // fallback automático
-        }
-      } else {
-        console.warn(
-          "SyncManager no soportado, se usará sincronización manual"
-          // fallback automático
-        );
-        manualSyncSetup();
-      }
-
-      showFinalMessage(respuestaBase);
-    });
-
-    nav.appendChild(finish);
   }
 
   step.appendChild(nav);
   root.appendChild(step);
 }
 
+function getInputType(q) {
+  if (q.type === "number") return "number";
+  if ((q.label || "").toLowerCase().includes("correo")) return "email";
+  return "text";
+}
+
+function renderMultipleChoice(q, content) {
+  // Recuperar lo que ya había marcado si regresó con "Atrás"
+  if (!multiSelection.length && answers[q.id]) {
+    multiSelection = String(answers[q.id]).split(", ").filter(Boolean);
+  }
+
+  const hint = document.createElement("p");
+  hint.textContent = "Puedes elegir varias opciones";
+  hint.style.opacity = "0.7";
+  hint.style.width = "100%";
+  content.appendChild(hint);
+
+  q.options.forEach((opt) => {
+    const value = opt.label || opt;
+    const btn = document.createElement("button");
+    btn.className = "btn" + (multiSelection.includes(value) ? " selected" : "");
+    btn.type = "button";
+    btn.textContent = value;
+    btn.setAttribute("aria-pressed", multiSelection.includes(value));
+    btn.addEventListener("click", () => {
+      multiSelection = multiSelection.includes(value)
+        ? multiSelection.filter((v) => v !== value)
+        : [...multiSelection, value];
+      render();
+    });
+    content.appendChild(btn);
+  });
+
+  const nextBtn = document.createElement("button");
+  nextBtn.className = "btn";
+  nextBtn.type = "button";
+  nextBtn.textContent = "Siguiente";
+  nextBtn.addEventListener("click", async () => {
+    if (!multiSelection.length) return alert("Elige al menos una opción.");
+    await handleAnswer(q, multiSelection.join(", "));
+  });
+  content.appendChild(nextBtn);
+}
+
 async function handleAnswer(q, value) {
   // Guardar respuesta
   answers[q.id] = value.label || value;
+  multiSelection = [];
   console.log("Respuesta:", q.id, value);
 
   // Si es la primera pregunta (selección principal)
   if (q.id === "q1") {
-    selectedGroup = value.uuid; // ahora usamos el uuid
-    console.log("Seleccionado grupo (uuid):", selectedGroup);
-    console.log("Preguntas del grupo:", QUESTION_GROUPS[selectedGroup]);
-    QUESTIONS = [FIRST_QUESTION, ...(QUESTION_GROUPS[selectedGroup] || [])];
+    selectedGroup = value.uuid;
+    const groupQuestions = QUESTION_GROUPS[selectedGroup] || [];
+
+    if (!groupQuestions.length) {
+      alert("Esta opción todavía no tiene preguntas.");
+      return;
+    }
+
+    QUESTIONS = [FIRST_QUESTION, ...groupQuestions];
     current = 1;
     render();
     return;
   }
 
-  // 👉 Si ya estamos en la ÚLTIMA pregunta, finalizar de una vez
+  // Si ya estamos en la ÚLTIMA pregunta, finalizar de una vez
   if (current === QUESTIONS.length - 1) {
     await finalizeForm();
     return;
   }
 
-  // Si no es la última, continuar normal
   nextStep();
 }
 
+let finalizing = false;
+
 async function finalizeForm() {
-  const record = { fecha: new Date().toISOString(), send_api: false };
+  if (finalizing) return; // evita guardar dos veces con doble clic
+  finalizing = true;
 
-  // Guardar todas las respuestas
-  QUESTIONS.forEach((q) => {
-    const key = q.uuid || q.id;
-    record[key] = answers[q.id] || "";
-  });
+  try {
+    const uuidBase = selectedGroup;
+    const record = {
+      id: crypto.randomUUID(),
+      fecha: new Date().toISOString(),
+      send_api: false,
+    };
 
-  // ✅ Clasificación por la primera pregunta (FIRST_QUESTION)
-  const respuestaBase = answers[FIRST_QUESTION.id]; // por ejemplo "Planta / Esqueje"
-  const uuidBase = selectedGroup; // su uuid asociado (plantOrEsqueaje, frut, etc.)
+    // Guardar todas las respuestas
+    QUESTIONS.forEach((q) => {
+      const key = q.uuid || q.id;
+      record[key] = answers[q.id] || "";
+    });
 
-  // Insertar el registro en el grupo correspondiente
-  // Insertar el registro en el grupo correspondiente
-  await saveRecord(uuidBase, record);
+    // 1) Siempre se guarda primero en el dispositivo
+    await saveRecord(uuidBase, record);
 
-  if (navigator.onLine) {
-    console.log("🌐 Conexión disponible, enviando inmediatamente...");
-    try {
-      const token = "goro4vmm.gd3"; // tu token actual
-      const response = await fetch(
-        "https://admin-pitahaya.brounieapps.com/api/create/form",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            uuid: uuidBase,
-            data: record,
-          }),
-        }
-      );
-
-      if (response.ok) {
-        console.log("✅ Registro enviado correctamente.");
-        record.send_api = true;
-        await saveRecord(uuidBase, record); // actualizar estado local
-      } else {
-        console.warn("⚠️ Error al enviar, se guardará localmente.");
+    // 2) Si hay internet, se intenta mandar en ese momento
+    if (navigator.onLine) {
+      try {
+        const sent = await sendRecord(uuidBase, record);
+        if (sent) await markRecordSent(uuidBase, record.id);
+      } catch (e) {
+        console.log("📴 Falló el envío inmediato, queda pendiente.");
       }
-    } catch (err) {
-      console.error("❌ Error en envío inmediato:", err);
+    } else {
+      console.log("📴 Sin conexión, se enviará cuando vuelva el internet.");
     }
-  } else {
-    console.log("📴 Sin conexión, se guardará para envío posterior.");
-  }
 
-  // 👇 Si no hay conexión o falla, usar SyncManager para sincronizar luego
+    // 3) Lo que no se haya podido mandar queda pendiente para la sincronización
+    await registerBackgroundSync();
+
+    showFinalMessage();
+  } finally {
+    finalizing = false;
+  }
+}
+
+async function registerBackgroundSync() {
   if ("serviceWorker" in navigator && "SyncManager" in window) {
-    const registration = await navigator.serviceWorker.ready;
     try {
+      const registration = await navigator.serviceWorker.ready;
       await registration.sync.register("sync-data");
       console.log("📡 Sincronización registrada con éxito");
     } catch (err) {
       console.error("❌ No se pudo registrar la sincronización", err);
-      manualSyncSetup();
     }
-  } else {
-    console.warn("SyncManager no soportado, se usará sincronización manual");
-    manualSyncSetup();
   }
-
-  // Mensaje final
-  showFinalMessage(respuestaBase);
+  // La sincronización manual (online + cada 30 s) siempre está activa como respaldo
+  manualSyncSetup();
 }
 
 async function nextStep() {
@@ -244,12 +237,24 @@ function resetForm() {
   answers = {};
   current = 0;
   selectedGroup = null;
+  multiSelection = [];
+
+  // Si mientras tanto se descargaron preguntas nuevas, se usan desde este registro
+  applyLatestCachedQuestions();
+
   QUESTIONS = [FIRST_QUESTION];
   render();
 }
 
+function showLoading() {
+  root.innerHTML = '<p class="loading-questions">Cargando preguntas...</p>';
+}
+
 window.addEventListener("load", async () => {
+  showLoading();
+
   await initRecords();
+  await loadQuestions();
   render();
 
   if ("serviceWorker" in navigator) {
@@ -260,7 +265,6 @@ window.addEventListener("load", async () => {
       console.error(e);
     }
   }
-
 
   manualSyncSetup();
 });
@@ -275,10 +279,8 @@ async function manualSyncSetup() {
   // Cuando vuelve internet
   window.addEventListener("online", async () => {
     console.log("📡 Internet restaurado");
-
     try {
       await sendPendingData();
-      console.log("✅ Datos pendientes enviados");
     } catch (e) {
       console.error("❌ Error enviando pendientes", e);
     }
@@ -323,9 +325,6 @@ function showFinalMessage() {
 
   root.appendChild(wrapper);
 
-  // Mostrar por 10 segundos y luego reiniciar formulario
-  setTimeout(() => {
-    resetForm();
-    render();
-  }, 5000);
+  // Mostrar 5 segundos y luego reiniciar formulario
+  setTimeout(resetForm, 5000);
 }

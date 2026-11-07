@@ -7,6 +7,20 @@
   <title>Registro</title>
   <link rel="manifest" href="manifest.json" />
   <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Opción marcada en preguntas de selección múltiple */
+    .btn.selected {
+      outline: 3px solid currentColor;
+      outline-offset: 2px;
+      font-weight: 700;
+    }
+
+    .loading-questions {
+      padding: 2rem 0;
+      text-align: center;
+      opacity: 0.7;
+    }
+  </style>
 </head>
 
 <body>
@@ -557,7 +571,9 @@
 
 
     // Primera pregunta base
-    const FIRST_QUESTION = {
+    // RESPALDO: solo se usa si la PWA nunca ha podido descargar las preguntas de la API.
+    // Es "let" porque questions.js la reemplaza con las preguntas del admin.
+    let FIRST_QUESTION = {
       id: "q1",
       label: "¿Qué le interesa?",
       // options: ["productor", "comercializador", "consumidor"],
@@ -574,7 +590,8 @@
 
 
     // Preguntas agrupadas por flujos
-    const QUESTION_GROUPS = {
+    // RESPALDO: igual que FIRST_QUESTION, questions.js lo reemplaza con las de la API.
+    let QUESTION_GROUPS = {
       plantOrEsqueaje: [
         {
           id: "q2",
@@ -1266,6 +1283,7 @@
     let QUESTIONS = [FIRST_QUESTION];
   </script>
   <script src="db.js"></script>
+  <script src="questions.js"></script>
   <script src="./formController.js"></script>
   <script src="export.js"></script>
   <script src="app.js"></script>
