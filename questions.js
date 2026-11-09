@@ -7,7 +7,8 @@
 //   2. Sin internet  -> usa la última copia guardada
 //   3. Nunca ha tenido internet -> usa las preguntas escritas en index.html (respaldo)
 
-const QUESTIONS_API_URL = "https://admin-pitahaya.brounieapps.com/api/questions";
+const QUESTIONS_API_URL =
+  "https://admin-pitahaya.brounieapps.com/api/questions";
 const QUESTIONS_STORAGE_KEY = "pitahaya_questions_v1";
 const QUESTIONS_FETCH_TIMEOUT = 6000; // ms: en la expo no queremos esperar de más
 
@@ -22,7 +23,7 @@ const FALLBACK_QUESTIONS = {
   first: FIRST_QUESTION,
   groups: QUESTION_GROUPS,
   titles: Object.fromEntries(
-    (FIRST_QUESTION.options || []).map((opt) => [opt.uuid, opt.label])
+    (FIRST_QUESTION.options || []).map((opt) => [opt.uuid, opt.label]),
   ),
 };
 
@@ -31,7 +32,9 @@ function sectionKey(section) {
 }
 
 function getGroupTitle(groupKey) {
-  return GROUP_TITLES[groupKey] || FALLBACK_QUESTIONS.titles[groupKey] || groupKey;
+  return (
+    GROUP_TITLES[groupKey] || FALLBACK_QUESTIONS.titles[groupKey] || groupKey
+  );
 }
 
 /**
@@ -43,7 +46,7 @@ function buildQuestionSet(sections) {
 
   // Una pregunta principal sin preguntas secundarias no se puede contestar
   const valid = sections.filter(
-    (s) => Array.isArray(s.questions) && s.questions.length > 0
+    (s) => Array.isArray(s.questions) && s.questions.length > 0,
   );
   if (!valid.length) return null;
 
@@ -86,6 +89,7 @@ function buildQuestionSet(sections) {
           uuid: answerKey,
           type: str, // text | number | checkbox | select | scale
           multiple: str === "select" && isMultiple,
+          required: q.required !== false, // si la API no lo manda, se toma como obligatoria
           options,
         };
       });
@@ -135,7 +139,7 @@ async function fetchQuestionSet() {
 
     localStorage.setItem(
       QUESTIONS_STORAGE_KEY,
-      JSON.stringify({ savedAt: new Date().toISOString(), sections })
+      JSON.stringify({ savedAt: new Date().toISOString(), sections }),
     );
 
     return set;
@@ -153,7 +157,10 @@ async function loadQuestions() {
       applyQuestionSet(await fetchQuestionSet(), "api");
       return;
     } catch (e) {
-      console.warn("⚠️ No se pudieron descargar las preguntas, se usa la copia local:", e.message);
+      console.warn(
+        "⚠️ No se pudieron descargar las preguntas, se usa la copia local:",
+        e.message,
+      );
     }
   }
 
@@ -184,7 +191,8 @@ async function refreshQuestionsInBackground() {
  */
 function applyLatestCachedQuestions() {
   const cachedSet = buildQuestionSet(readCachedSections());
-  if (cachedSet) applyQuestionSet(cachedSet, QUESTIONS_SOURCE === "api" ? "api" : "cache");
+  if (cachedSet)
+    applyQuestionSet(cachedSet, QUESTIONS_SOURCE === "api" ? "api" : "cache");
 }
 
 window.addEventListener("online", refreshQuestionsInBackground);

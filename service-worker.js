@@ -1,7 +1,7 @@
 importScripts("formController.js");
 
 // Cambia la versión cada vez que subas cambios a los archivos de la PWA
-const CACHE_NAME = "pitahaya-cache-v3";
+const CACHE_NAME = "pitahaya-cache-v4";
 const ASSETS = [
   "index.html",
   "style.css",
@@ -17,7 +17,9 @@ const ASSETS = [
 
 self.addEventListener("install", (event) => {
   self.skipWaiting();
-  event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)));
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)),
+  );
 });
 
 self.addEventListener("activate", (event) => {
@@ -25,9 +27,13 @@ self.addEventListener("activate", (event) => {
     caches
       .keys()
       .then((keys) =>
-        Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key)))
+        Promise.all(
+          keys
+            .filter((key) => key !== CACHE_NAME)
+            .map((key) => caches.delete(key)),
+        ),
       )
-      .then(() => self.clients.claim())
+      .then(() => self.clients.claim()),
   );
 });
 
@@ -40,11 +46,13 @@ self.addEventListener("fetch", (event) => {
       .then((response) => {
         if (response.ok) {
           const responseClone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
+          caches
+            .open(CACHE_NAME)
+            .then((cache) => cache.put(event.request, responseClone));
         }
         return response;
       })
-      .catch(() => caches.match(event.request))
+      .catch(() => caches.match(event.request)),
   );
 });
 

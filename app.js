@@ -22,6 +22,13 @@ function render() {
   const label = document.createElement("div");
   label.className = "question";
   label.textContent = q.label;
+  if (isOptional(q)) {
+    const hint = document.createElement("span");
+    hint.textContent = " (opcional)";
+    hint.style.opacity = "0.6";
+    hint.style.fontWeight = "normal";
+    label.appendChild(hint);
+  }
   step.appendChild(label);
 
   const content = document.createElement("div");
@@ -42,6 +49,8 @@ function render() {
       });
       content.appendChild(btn);
     });
+
+    if (isOptional(q)) content.appendChild(skipButton(q));
   } else {
     // Campo libre (texto o número)
     const input = document.createElement("input");
@@ -58,7 +67,8 @@ function render() {
 
     const submitText = async () => {
       const val = input.value.trim();
-      if (!val) return alert("Por favor completa la respuesta.");
+      if (!val && !isOptional(q))
+        return alert("Por favor completa la respuesta.");
       await handleAnswer(q, val);
     };
 
@@ -133,10 +143,30 @@ function renderMultipleChoice(q, content) {
   nextBtn.type = "button";
   nextBtn.textContent = "Siguiente";
   nextBtn.addEventListener("click", async () => {
-    if (!multiSelection.length) return alert("Elige al menos una opción.");
+    if (!multiSelection.length && !isOptional(q))
+      return alert("Elige al menos una opción.");
     await handleAnswer(q, multiSelection.join(", "));
   });
   content.appendChild(nextBtn);
+
+  if (isOptional(q)) content.appendChild(skipButton(q));
+}
+
+// La primera pregunta y las preguntas de respaldo siempre son obligatorias
+function isOptional(q) {
+  return q.id !== "q1" && q.required === false;
+}
+
+function skipButton(q) {
+  const skip = document.createElement("button");
+  skip.className = "btn secondary";
+  skip.type = "button";
+  skip.textContent = "Omitir";
+  skip.addEventListener("click", async () => {
+    multiSelection = [];
+    await handleAnswer(q, "");
+  });
+  return skip;
 }
 
 async function handleAnswer(q, value) {
